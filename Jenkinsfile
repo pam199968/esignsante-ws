@@ -40,34 +40,29 @@ pipeline {
                 )
             }
         }
-
         stage ('Builds') {
             parallel {
                 stage ('Exec Maven') {
                     steps {
-                        rtMavenRun (
-                            //tool: tools, // Tool name from Jenkins configuration
-                            pom: 'pom.xml',
-                            goals: 'clean install',
-                            deployerId: "MAVEN_DEPLOYER",
-                            resolverId: "MAVEN_RESOLVER"
-                        )
-                        configFileProvider([
-                			configFile(
-                				fileId: 'org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1427306179475',
-                				targetLocation: 'ASIPGlobalSettings.xml',
-                				variable: 'ASIPGlobalSettings'
-                			),
-                			configFile(
-                				fileId: 'org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig1452787041167',
-                				targetLocation: 'ASIPProfilesSettings.xml',
-                				variable: 'ASIPProfilesSettings'
-                			)
-                		]) {
-                            withSonarQubeEnv("${sonarQubeEnv}") {
-                                sh 'mvn -s $ASIPProfilesSettings -gs $ASIPGlobalSettings org.jacoco:jacoco-maven-plugin:0.7.4.201502262128:prepare-agent package org.jacoco:jacoco-maven-plugin:0.7.4.201502262128:report org.sonarsource.scanner.maven:sonar-maven-plugin:3.5.0.1254:sonar -P !SONAR_SCM_DISABLED'
+                        script {
+                            configFileProvider([
+                                configFile(
+                                    fileId: 'org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1427306179475',
+                                    targetLocation: 'ASIPGlobalSettings.xml',
+                                    variable: 'ASIPGlobalSettings'
+                                ),
+                                configFile(
+                                    fileId: 'org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig1452787041167',
+                                    targetLocation: 'ASIPProfilesSettings.xml',
+                                    variable: 'ASIPProfilesSettings'
+                                )
+                            ])
+                            {
+                                withSonarQubeEnv("${sonarQubeEnv}") {
+                                    sh 'mvn clean -s $ASIPProfilesSettings -gs $ASIPGlobalSettings org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report sonar:sonar assembly:single -P !SONAR_SCM_DISABLED'
+                                }
                             }
-            			}
+                        }
                     }
                 }
             }
