@@ -220,7 +220,7 @@
 		<dependency>
 			<groupId>fr.asipsante.api.sign</groupId>
 			<artifactId>asip-sign-api</artifactId>
-			<version>2.3.0.8-RELEASE</version>
+			<version>2.3.0.9-RELEASE</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -345,6 +345,16 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.albfernandez</groupId>
+			<artifactId>juniversalchardet</artifactId>
+			<version>2.3.2</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -355,7 +365,12 @@
 			</activation>
 			<id>dev</id>
 			<properties>
-				<artifactory.hostname>https://repo.asip.asipsante.fr</artifactory.hostname>
+				<!--proxy BT-->
+				<artifactory.hostname>http://repo.proxy-dev-forge.asip.hst.fluxus.net</artifactory.hostname>
+				<!--résaux ANS-->
+<!--
+				<artifactory.hostname>https://repo.forge.ans.henix.fr/</artifactory.hostname>
+-->
 				<ldap.server.url>ldap://annuaire.asipsante.fr</ldap.server.url>
 				<docker.registry>registry.repo.forge.ans.henix.fr</docker.registry>
 			</properties>

@@ -71,7 +71,7 @@ public class SignatureApiIntegrationTest {
     @Before
     public void init() throws Exception {
         xml = new MockMultipartFile("file", Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("Fichier_TOMWS2_SANS_SIGNATURE.xml"));
+                .getResourceAsStream("Fichier_TOMWS2_SANS_SIGNATURE_ISO-8859-15.xml"));
 
         texte = new MockMultipartFile("file",
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("toBeSigned.txt"));

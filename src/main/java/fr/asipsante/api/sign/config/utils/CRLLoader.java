@@ -227,7 +227,7 @@ public class CRLLoader {
                     }
                 }
             }
-            if (crlColl == null || crlColl.size() == 0) {
+            if (crlColl == null || crlColl.isEmpty()) {
                 final String message = String.format("Unable to load CRL from \"%s\"",
                         cRLPath);
                 throw new GeneralSecurityException(message);
@@ -247,7 +247,7 @@ public class CRLLoader {
                 throws GeneralSecurityException {
             Collection<X509CRL> collection = Collections.emptyList();
             try {
-                log.debug("Loading CRL from {}", remoteURI.toString());
+                log.debug("Loading CRL from {}", remoteURI);
 
                 final URLConnection conn = remoteURI.toURL().openConnection();
                 conn.setDoInput(true);

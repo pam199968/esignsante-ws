@@ -34,6 +34,7 @@ import fr.asipsante.api.sign.ws.model.Metadata;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -354,7 +354,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
             final SignatureValidationParameters signValidationParameters)
             throws IOException, AsipSignException {
 
-        final String docString = new String(doc.getBytes(), StandardCharsets.UTF_8);
+        final String docString = new String(doc.getBytes(), UniversalDetector.detectCharset(doc.getInputStream()));
 
         // Validation de la signature du document
         final RapportValidationSignature rapportVerifSignANS;
@@ -563,7 +563,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
             rapportVerifCertANS = certificateValidationService.validateCertificat(doc.getBytes(),
                     certValidationParameters, serviceCaCrl.getCacrlWrapper());
         } else {
-            final String docString = new String(doc.getBytes(), StandardCharsets.UTF_8);
+            final String docString = new String(doc.getBytes(), UniversalDetector.detectCharset(doc.getInputStream()));
             rapportVerifCertANS = certificateValidationService.validateCertificat(docString, certValidationParameters,
                     serviceCaCrl.getCacrlWrapper());
         }
