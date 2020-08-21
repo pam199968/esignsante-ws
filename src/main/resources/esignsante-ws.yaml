@@ -307,6 +307,9 @@ paths:
                description: Ressource introuvable (identifiant de configuration qui n'existe pas par exemple).
             '500':
                description: Erreur interne du serveur (vérifier que le document est au bon format XML).
+            '501':
+               description: L'opération n'est pas supportée par le serveur (soumission d'un document qui n'est pas au format
+                  XML pour une signature enveloppée par exemple).
             '503':
                description: Le service n'est pas disponible.
    /validation/signatures/xmldsigwithproof:
@@ -343,7 +346,10 @@ paths:
             '404':
                description: Ressource introuvable (identifiant de configuration qui n'existe pas par exemple).
             '500':
-               description: Erreur interne du serveur (vérifier que le document est au bon format XML).
+               description: Erreur interne du serveur.
+            '501':
+               description: L'opération n'est pas supportée par le serveur (soumission d'un document qui n'est pas au format
+                  XML pour une signature enveloppée par exemple).
             '503':
                description: Le service n'est pas disponible.
    /validation/signatures/xadesbaselineb:
@@ -379,7 +385,10 @@ paths:
             '404':
                description: Ressource introuvable (identifiant de configuration qui n'existe pas par exemple).
             '500':
-               description: Erreur interne du serveur (vérifier que le document est au bon format XML).
+               description: Erreur interne du serveur.
+            '501':
+               description: L'opération n'est pas supportée par le serveur (soumission d'un document qui n'est pas au format
+                  XML pour une signature enveloppée par exemple).
             '503':
                description: Le service n'est pas disponible.
    /validation/signatures/xadesbaselinebwithproof:
@@ -416,7 +425,7 @@ paths:
             '404':
                description: Ressource introuvable (identifiant de configuration qui n'existe pas par exemple).
             '500':
-               description: Erreur interne du serveur (vérifier que le document est au bon format XML).
+               description: Erreur interne du serveur.
             '501':
                description: L'opération n'est pas supportée par le serveur (demande de validation d'un document qui n'est
                   pas au format XML).

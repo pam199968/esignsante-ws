@@ -17,6 +17,9 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.3.3.RELEASE</version>
 	</parent>
+	<!--<scm>
+		<developerConnection>scm:svn:http://scm-forge.asipsante.fr:18080/svn/esignsante/esignsante-ws/applicatif/branches/esignsante-webservices-L3</developerConnection>
+	</scm>-->
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testResources>
@@ -170,11 +173,11 @@
 						<!--<image>openjdk:11-slim-buster</image>-->
 					</from>
 					<to>
-						<image>${docker.registry}/ans/esignsante</image>
-						<auth>
+						<image>${image.registry}/cybersante/esignsante</image>
+						<!--<auth>
 							<username>jenkins</username>
 							<password>Cr3vetUs</password>
-						</auth>
+						</auth>-->
 						<tags>
 							<tag>latest</tag>
 							<tag>${project.version}</tag>
@@ -373,6 +376,7 @@
 -->
 				<ldap.server.url>ldap://annuaire.asipsante.fr</ldap.server.url>
 				<docker.registry>registry.repo.forge.ans.henix.fr</docker.registry>
+				<image.registry>esignsante-registry.repo.forge.ans.henix.fr</image.registry>
 			</properties>
 		</profile>
 		<profile>
@@ -388,6 +392,8 @@
 				<artifactory.hostname>http://st-forge.asipsante.fr:8081</artifactory.hostname>
 				<ldap.server.url>ldap://annuaire-igc.esante.gouv.fr:389</ldap.server.url>
 				<docker.registry>registry.repo.asip.asipsante.fr</docker.registry>
+				<!--<image.registry>esignsante-registry.repo.artifactory-interne.henix.asipsante.fr</image.registry>-->
+				<image.registry>esignsante-registry.repo.docker.asip.hst.fluxus.net</image.registry>
 			</properties>
 			<distributionManagement>
 				<repository>
@@ -443,6 +449,7 @@
 				<artifactory.hostname>http://repo.proxy-dev-forge.asip.hst.fluxus.net</artifactory.hostname>
 				<ldap.server.url>ldap://annuaire-igc.esante.gouv.fr</ldap.server.url>
 				<docker.registry>registry.repo.proxy-dev-forge.asip.hst.fluxus.net</docker.registry>
+				<image.registry>esignsante-registry.repo.proxy-dev-forge.asip.hst.fluxus.net</image.registry>
 			</properties>
 		</profile>
 	</profiles>
