@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.0.RELEASE</version>
+		<version>2.3.3.RELEASE</version>
 	</parent>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
@@ -220,7 +220,7 @@
 		<dependency>
 			<groupId>fr.asipsante.api.sign</groupId>
 			<artifactId>asip-sign-api</artifactId>
-			<version>2.3.0.9-RELEASE</version>
+			<version>2.3.0.10-RELEASE</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -402,9 +402,22 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<id>parse-version</id>
+								<goals>
+									<goal>parse-version</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-release-plugin</artifactId>
-						<version>2.3.2</version>
+						<version>3.0.0-M1</version>
 						<configuration>
 							<username>${svn.username}</username>
 							<password>${svn.password}</password>
@@ -412,7 +425,7 @@
 								<checkModificationExclude>pom.xml</checkModificationExclude>
 								<checkModificationExclude>pom.xml.versionsBackup</checkModificationExclude>
 							</checkModificationExcludes>
-							<tagBase>http://scm-forge.asipsante.fr:18080/svn/tra/asip-sign-webservices/applicatif/tags</tagBase>
+							<tagBase>http://scm-forge.asipsante.fr:18080/svn/esignsante/esignsante-ws/applicatif/tags</tagBase>
 							<tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
 						</configuration>
 					</plugin>
