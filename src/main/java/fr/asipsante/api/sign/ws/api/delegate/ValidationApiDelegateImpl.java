@@ -354,15 +354,13 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
             final SignatureValidationParameters signValidationParameters)
             throws IOException, AsipSignException {
 
-        final String docString = new String(doc.getBytes(), UniversalDetector.detectCharset(doc.getInputStream()));
-
         // Validation de la signature du document
         final RapportValidationSignature rapportVerifSignANS;
         if (isXades) {
-            rapportVerifSignANS = signatureValidationService.validateXADESBaseLineBSignature(docString,
+            rapportVerifSignANS = signatureValidationService.validateXADESBaseLineBSignature(doc.getBytes(),
                     signValidationParameters, serviceCaCrl.getCacrlWrapper());
         } else {
-            rapportVerifSignANS = signatureValidationService.validateXMLDsigSignature(docString,
+            rapportVerifSignANS = signatureValidationService.validateXMLDsigSignature(doc.getBytes(),
                     signValidationParameters, serviceCaCrl.getCacrlWrapper());
         }
 

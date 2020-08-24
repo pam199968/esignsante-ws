@@ -32,7 +32,6 @@ import fr.asipsante.api.sign.ws.model.Metadata;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,7 +160,6 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
             final SignatureParameters signProofParams) {
         ResponseEntity<ESignSanteSignatureReportWithProof> re;
         try {
-            final String docString = new String(doc.getBytes(), UniversalDetector.detectCharset(doc.getInputStream()));
             // Contrôle du certificat de signature
             HttpStatus status = SignWsUtils.checkCertificate(signParams, serviceCaCrl.getCacrlWrapper());
             if (status != HttpStatus.CONTINUE) {
@@ -171,13 +169,13 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 final RapportValidationSignature rapportVerifSignature;
                 // Signature du document
                 if (isXades) {
-                    rapportSignature = signatureService.signXADESBaselineB(docString, signParams);
+                    rapportSignature = signatureService.signXADESBaselineB(doc.getBytes(), signParams);
                     // Validation de la signature
                     rapportVerifSignature = signatureValidationService.validateXADESBaseLineBSignature(
                             rapportSignature.getDocSigne(), signValidationParameters, serviceCaCrl.getCacrlWrapper());
 
                 } else {
-                    rapportSignature = signatureService.signXMLDsig(docString, signParams);
+                    rapportSignature = signatureService.signXMLDsig(doc.getBytes(), signParams);
                     // Validation de la signature
                     rapportVerifSignature = signatureValidationService.validateXMLDsigSignature(
                             rapportSignature.getDocSigne(), signValidationParameters, serviceCaCrl.getCacrlWrapper());
@@ -357,7 +355,6 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                                                            final MultipartFile doc, final boolean isXades) {
         ResponseEntity<ESignSanteSignatureReport> re;
         try {
-            final String docString = new String(doc.getBytes(), UniversalDetector.detectCharset(doc.getInputStream()));
             // Contrôle du certificat de signature
             final HttpStatus status = SignWsUtils.checkCertificate(signParams, serviceCaCrl.getCacrlWrapper());
             if (status != HttpStatus.CONTINUE) {
@@ -366,9 +363,9 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 // Signature
                 final RapportSignature rapportSignature;
                 if (isXades) {
-                    rapportSignature = signatureService.signXADESBaselineB(docString, signParams);
+                    rapportSignature = signatureService.signXADESBaselineB(doc.getBytes(), signParams);
                 } else {
-                    rapportSignature = signatureService.signXMLDsig(docString, signParams);
+                    rapportSignature = signatureService.signXMLDsig(doc.getBytes(), signParams);
                 }
                 final ESignSanteSignatureReport rapport = populateResultSign(rapportSignature.getListeErreurSignature(),
                         rapportSignature.getDocSigne());
