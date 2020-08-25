@@ -649,7 +649,6 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
             final Metadata meta = new Metadata();
             meta.setTypeMetadata(metadatum.getType().getName());
             if (metadatum.getType().equals(MetaDataType.RAPPORT_DIAGNOSTIQUE)
-                    || metadatum.getType().equals(MetaDataType.DOCUMENT_ORIGINAL_NON_SIGNE)
                     || metadatum.getType().equals(MetaDataType.RAPPORT_DSS)) {
                 meta.setMessage(Base64.getEncoder().encodeToString(metadatum.getValue().getBytes()));
             } else {
@@ -694,7 +693,6 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
             final Metadata meta = new Metadata();
             meta.setTypeMetadata(metadatum.getType().getName());
             if (metadatum.getType().equals(MetaDataType.RAPPORT_DIAGNOSTIQUE)
-                    || metadatum.getType().equals(MetaDataType.DOCUMENT_ORIGINAL_NON_SIGNE)
                     || metadatum.getType().equals(MetaDataType.RAPPORT_DSS)) {
                 meta.setMessage(Base64.getEncoder().encodeToString(metadatum.getValue().getBytes()));
             } else {
@@ -736,7 +734,6 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
             final Metadata meta = new Metadata();
             meta.setTypeMetadata(metadatum.getType().getName());
             if (metadatum.getType().equals(MetaDataType.RAPPORT_DIAGNOSTIQUE)
-                    || metadatum.getType().equals(MetaDataType.DOCUMENT_ORIGINAL_NON_SIGNE)
                     || metadatum.getType().equals(MetaDataType.RAPPORT_DSS)) {
                 meta.setMessage(Base64.getEncoder().encodeToString(metadatum.getValue().getBytes()));
             } else {
@@ -781,7 +778,6 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
             final Metadata meta = new Metadata();
             meta.setTypeMetadata(metadatum.getType().getName());
             if (metadatum.getType().equals(MetaDataType.RAPPORT_DIAGNOSTIQUE)
-                    || metadatum.getType().equals(MetaDataType.DOCUMENT_ORIGINAL_NON_SIGNE)
                     || metadatum.getType().equals(MetaDataType.RAPPORT_DSS)) {
                 meta.setMessage(Base64.getEncoder().encodeToString(metadatum.getValue().getBytes()));
             } else {

@@ -70,7 +70,7 @@ public class ValidationApiIntegrationTest {
     @Before
     public void init() throws Exception {
         doc = new MockMultipartFile("file",
-                Thread.currentThread().getContextClassLoader().getResourceAsStream("TOM_FICHIER.xml"));
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("doc_signe_xades_ISO-8859-15.xml"));
     }
 
     /**
@@ -82,7 +82,7 @@ public class ValidationApiIntegrationTest {
     public void verifSignXMLdsigTest() throws Exception {
 
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/xmldsigwithproof").file(doc)
-                .param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
+                .param("idVerifSignConf", "2").param("requestId", "Request-1").param("proofTag", "MonTAG")
                 .param("applicantId", "RPPS").param("idProofConf", "1").accept("application/json"))
                 .andExpect(status().isOk()).andDo(print()).andReturn();
 

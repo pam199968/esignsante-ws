@@ -73,8 +73,11 @@ public class RulesFormatting {
                      Thread.currentThread().getContextClassLoader().getResourceAsStream("obligatory-rules.properties")) {
             assert is != null;
             Scanner obligatoryRules = new Scanner(is);
-            while (obligatoryRules.hasNextLine() && !obligatoryRules.nextLine().startsWith("#")){
-                rulesList.add(obligatoryRules.nextLine()); // add obligatory rules
+            while (obligatoryRules.hasNextLine()){
+                String rule = obligatoryRules.nextLine();
+                if (!rule.startsWith("#")) {
+                    rulesList.add(rule); // add obligatory rules
+                }
             }
             obligatoryRules.close();
         } catch (final IOException e) {
