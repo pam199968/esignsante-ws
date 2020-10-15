@@ -10,7 +10,7 @@
 		<fileSet>
 			<directoryMode>755</directoryMode>
 			<fileMode>644</fileMode>
-			<directory>${project.basedir}/src/main/resources/jar</directory>
+			<directory>${project.basedir}/src/main/resources/${dist}</directory>
 			<outputDirectory/>
 			<includes>
 				<include>application.properties</include>
