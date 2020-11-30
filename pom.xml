@@ -464,8 +464,8 @@
 						<artifactId>maven-release-plugin</artifactId>
 						<version>3.0.0-M1</version>
 						<configuration>
-							<username>${svn.username}</username>
-							<password>${svn.password}</password>
+							<!--<username>${svn.username}</username>
+							<password>${svn.password}</password>-->
 							<checkModificationExcludes>
 								<checkModificationExclude>pom.xml</checkModificationExclude>
 								<checkModificationExclude>pom.xml.versionsBackup</checkModificationExclude>
