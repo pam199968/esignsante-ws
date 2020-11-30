@@ -18,9 +18,9 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.4.0</version>
 	</parent>
-	<!--<scm>
-		<developerConnection>scm:svn:http://scm-forge.asipsante.fr:18080/svn/esignsante/esignsante-ws/applicatif/branches/esignsante-webservices-jar</developerConnection>
-	</scm>-->
+	<scm>
+		<developerConnection>${developperConnectionJenkinsfile}</developerConnection> 
+	</scm>
 	<build>
 		<resources>
 			<resource>
@@ -407,7 +407,6 @@
 				<image.registry>esignsante-registry.repo.forge.ans.henix.fr</image.registry>
 			</properties>
 			<distributionManagement>
-
 				<repository>
 					<id>github-ans</id>
 					<name>GitHub ansforge Apache Maven Packages</name>
@@ -434,8 +433,12 @@
 			<distributionManagement>
 				<repository>
 					<id>artifactory</id>
-					<url>${artifactory.hostname}/artifactory/asip-releases</url>
+					<url>${distributionRepositoryJenkinsfile}</url>
 				</repository>
+				<!--<repository>
+					<id>artifactory</id>
+					<url>${artifactory.hostname}/artifactory/asip-releases</url>
+				</repository>-->
 				<snapshotRepository>
 					<id>artifactory</id>
 					<url>${artifactory.hostname}/artifactory/asip-snapshots</url>
