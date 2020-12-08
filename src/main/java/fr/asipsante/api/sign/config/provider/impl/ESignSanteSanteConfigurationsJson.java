@@ -17,25 +17,28 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.InvalidParameterException;
-import java.util.concurrent.TimeUnit;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The Class ESignSanteSanteConfigurationsJson.
  */
 @Component
-public class ESignSanteSanteConfigurationsJson extends Thread implements IeSignSanteConfigurationsProvider {
+public class ESignSanteSanteConfigurationsJson implements IeSignSanteConfigurationsProvider {
 
     /** The log. */
     private static final Logger log = LoggerFactory.getLogger(ESignSanteSanteConfigurationsJson.class);
 
     /**
-     * TIMEOUT.
+     * SLEEP.
      */
-    private static final long TIMEOUT = 25;
+    private static final long SLEEP = 60000;
 
     /**
      * whether or not we're on app startup.
@@ -120,13 +123,24 @@ public class ESignSanteSanteConfigurationsJson extends Thread implements IeSignS
         /**
          * stop.
          */
-        private AtomicBoolean stop = new AtomicBoolean(false);
+        private final AtomicBoolean stop = new AtomicBoolean(false);
+
+        /**
+         * MD5 checksum.
+         */
+        private String checksum;
 
         /**
          * Reload configuration file on change.
          */
         @PostConstruct
         public void reloadConfiguration() {
+            final File file = new File(System.getProperty("ws.conf"));
+            try {
+                checksum = getFileChecksum(MessageDigest.getInstance("MD5"), file);
+            } catch (IOException | NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
             start();
         }
 
@@ -176,56 +190,59 @@ public class ESignSanteSanteConfigurationsJson extends Thread implements IeSignS
          */
         @Override
         public void run() {
-            final File file = new File(System.getProperty("ws.conf"));
-            try (final WatchService watcher = FileSystems.getDefault().newWatchService()) {
-                final Path path = file.getAbsoluteFile().toPath().getParent();
-                path.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
+            log.info("Configuration file poll thread started.");
+            //Use MD5 algorithm
+            MessageDigest md5Digest;
+            try {
+                md5Digest = MessageDigest.getInstance("MD5");
                 while (!isStopped()) { // infinite loop basically
-                    final WatchKey key;
-                    try {
-                        key = watcher.poll(TIMEOUT, TimeUnit.MILLISECONDS);
-                    } catch (final InterruptedException e) {
-                        return;
-                    }
-                    if (key == null) {
-                        Thread.yield();
+                    //Get the newChecksum
+                    final File file = new File(System.getProperty("ws.conf"));
+                    String newChecksum = getFileChecksum(md5Digest, file);
+                    if (newChecksum.equals(checksum)) {
+                        log.debug("pas de nouvelle configuration détecté");
                         continue;
+                    } else {
+                        log.debug("une nouvelle configuration a été détecté");
+                        checksum = newChecksum;
+                        // do something only if we detect a modification to the specific file
+                        doOnChange(file);
                     }
-                    // poll events since last timeout
-                    watchEvents(file, key);
-                    Thread.yield();
+                    Thread.sleep(SLEEP);
                 }
-            } catch (final IOException e) {
+            } catch (NoSuchAlgorithmException | IOException | InterruptedException e) {
                 log.error("une erreur est survenue durant la surveillance du fichier de configuration : ", e);
             }
         }
 
         /**
-         * watch events.
+         * returns file checksum.
          *
          * @param file file
-         * @param key key
+         * @param digest digest
          */
-        private void watchEvents(final File file, final WatchKey key) {
-            for (final WatchEvent<?> event : key.pollEvents()) {
-                final WatchEvent.Kind<?> kind = event.kind();
-
-                @SuppressWarnings("unchecked") final WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                final Path filename = ev.context();
-
-                if (kind == StandardWatchEventKinds.OVERFLOW) {
-                    Thread.yield();
-                    continue;
-                } else if (kind == StandardWatchEventKinds.ENTRY_MODIFY
-                        && filename.toString().equals(file.getName())) {
-                    // do something only if it's a 'modification' event to the specific file
-                    doOnChange(file);
-                }
-                final boolean valid = key.reset();
-                if (!valid) {
-                    break;
-                }
+        private String getFileChecksum(MessageDigest digest, File file) throws IOException
+        {
+            //Get file input stream for reading the file content
+            FileInputStream fis = new FileInputStream(file);
+            //Create byte array to read data in chunks
+            byte[] byteArray = new byte[1024];
+            int bytesCount;
+            //Read file data and update in message digest
+            while ((bytesCount = fis.read(byteArray)) != -1) {
+                digest.update(byteArray, 0, bytesCount);
             }
+            //close the stream; We don't need it anymore.
+            fis.close();
+            //Get the hash's bytes
+            byte[] bytes = digest.digest();
+            //This bytes[] has bytes in decimal format; Convert it to hexadecimal format
+            StringBuilder sb = new StringBuilder();
+            for (byte aByte : bytes) {
+                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+            }
+            //return complete hash
+            return sb.toString();
         }
 
     }
