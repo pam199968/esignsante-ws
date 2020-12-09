@@ -488,7 +488,7 @@
 				<artifactory.hostname>http://repo.proxy-dev-forge.asip.hst.fluxus.net</artifactory.hostname>
 				<ldap.server.url>ldap://annuaire-igc.esante.gouv.fr</ldap.server.url>
 				<docker.registry>registry.repo.proxy-dev-forge.asip.hst.fluxus.net</docker.registry>
-				<image.registry>esignsante-registry.repo.proxy-dev-forge.asip.hst.fluxus.net</image.registry>
+				<image.registry>registry.repo.proxy-dev-forge.asip.hst.fluxus.net</image.registry>
 			</properties>
 		</profile>
 	</profiles>
