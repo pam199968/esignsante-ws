@@ -1,5 +1,3 @@
 @Library('AnsPipeline') _
 
-
-
-AnsPipelinePuppet(svnCredentialsId: "TRA", mailList: "TRA")
+AnsPipelineJdk11Mvn36(svnCredentialsId: "TRA", mailList: "TRA")
