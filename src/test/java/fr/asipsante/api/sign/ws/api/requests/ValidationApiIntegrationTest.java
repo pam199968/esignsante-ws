@@ -69,7 +69,7 @@ public class ValidationApiIntegrationTest {
      */
     @Before
     public void init() throws Exception {
-        doc = new MockMultipartFile("file",
+        doc = new MockMultipartFile("file", "doc_signe_xades_ISO-8859-15.xml", null,
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("doc_signe_xades_ISO-8859-15.xml"));
     }
 
@@ -118,7 +118,7 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifSignXadesExpireTest() throws Exception {
-        final MockMultipartFile document = new MockMultipartFile("file",
+        final MockMultipartFile document = new MockMultipartFile("file", "XADESCertExpire.xml", null,
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("XADESCertExpire.xml"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/xadesbaselineb").file(document)
                 .param("idVerifSignConf", "1").accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
@@ -136,8 +136,8 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifCertificatExpireTest() throws Exception {
-        final MockMultipartFile cert = new MockMultipartFile("file", Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("rpps.tra.henix.asipsante.fr-sign-expire.pem"));
+        final MockMultipartFile cert = new MockMultipartFile("file", "rpps.tra.henix.asipsante.fr-sign-expire.pem", null,
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("rpps.tra.henix.asipsante.fr-sign-expire.pem"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/certificats").file(cert)
                 .param("idVerifCertConf", "1").accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
 
@@ -155,7 +155,7 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifSignXMLdsigTestBadFile() throws Exception {
-        doc = new MockMultipartFile("file",
+        doc = new MockMultipartFile("file", "TOM_FICHIER_bad.xml", null,
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("TOM_FICHIER_bad.xml"));
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/xmldsigwithproof").file(doc)
@@ -188,8 +188,8 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifSignXadesEnveloppanteDocAltereTest() throws Exception {
-        final MockMultipartFile document = new MockMultipartFile("file", Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("sign_xades_enveloping_modifiedDoc.xml"));
+        final MockMultipartFile document = new MockMultipartFile("file", "sign_xades_enveloping_modifiedDoc.xml", null,
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("sign_xades_enveloping_modifiedDoc.xml"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/xadesbaselineb").file(document)
                 .param("idVerifSignConf", "1").accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
 
@@ -205,7 +205,7 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifSignXadesBadACTest() throws Exception {
-        final MockMultipartFile document = new MockMultipartFile("file",
+        final MockMultipartFile document = new MockMultipartFile("file", "SignatureCA-PERSONNE.xml", null,
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("SignatureCA-PERSONNE.xml"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/xadesbaselineb").file(document)
                 .param("idVerifSignConf", "1").accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
@@ -223,8 +223,8 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifCertificatTest() throws Exception {
-        final MockMultipartFile cert = new MockMultipartFile("file", Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("asip-p12-EL-TEST-ORG-SIGN-20181116-141712.pem"));
+        final MockMultipartFile cert = new MockMultipartFile("file", "asip-p12-EL-TEST-ORG-SIGN-20181116-141712.pem",
+                null, Thread.currentThread().getContextClassLoader().getResourceAsStream("asip-p12-EL-TEST-ORG-SIGN-20181116-141712.pem"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/certificats").file(cert)
                 .param("idVerifCertConf", "1").accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
 
@@ -240,8 +240,8 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifCertificatWithProofTest() throws Exception {
-        final MockMultipartFile cert = new MockMultipartFile("file", Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("asip-p12-EL-TEST-ORG-SIGN-20181116-141712.pem"));
+        final MockMultipartFile cert = new MockMultipartFile("file", "asip-p12-EL-TEST-ORG-SIGN-20181116-141712.pem",
+                null, Thread.currentThread().getContextClassLoader().getResourceAsStream("asip-p12-EL-TEST-ORG-SIGN-20181116-141712.pem"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/certificatswithproof").file(cert)
                 .param("idSignConf", "1").param("idVerifCertConf", "1").param("requestId", "Request-1")
                 .param("proofTag", "MonTAG").param("applicantId", "RPPS").param("idProofConf", "1")
@@ -259,7 +259,7 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifCertificatBadACTest() throws Exception {
-        final MockMultipartFile cert = new MockMultipartFile("file",
+        final MockMultipartFile cert = new MockMultipartFile("file", "classe4.pem", null,
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("classe4.pem"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/certificats").file(cert)
                 .param("idVerifCertConf", "1").accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
@@ -277,8 +277,9 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifCertificatDERTest() throws Exception {
-        final MockMultipartFile cert = new MockMultipartFile("file", Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("asip-p12-EL-TEST-ORG-SIGN-20181116-141712.der"));
+        final MockMultipartFile cert = new MockMultipartFile("file",
+                "asip-p12-EL-TEST-ORG-SIGN-20181116-141712.der", null,
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("asip-p12-EL-TEST-ORG-SIGN-20181116-141712.der"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/certificats").file(cert)
                 .param("idVerifCertConf", "1").accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
 
@@ -294,7 +295,7 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifCertificatBadCADERTest() throws Exception {
-        final MockMultipartFile cert = new MockMultipartFile("file",
+        final MockMultipartFile cert = new MockMultipartFile("file", "2600301752-Auth.crt", null,
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("2600301752-Auth.crt"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/certificats").file(cert)
                 .param("idVerifCertConf", "1").accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
