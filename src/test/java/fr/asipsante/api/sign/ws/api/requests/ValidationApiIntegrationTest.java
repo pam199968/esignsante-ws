@@ -171,8 +171,8 @@ public class ValidationApiIntegrationTest {
      */
     @Test
     public void verifSignXmldsigEnveloppeeDocAltereTest() throws Exception {
-        final MockMultipartFile document = new MockMultipartFile("file", Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("Signature_Dsig_enveloppee_document_modifie.xml"));
+        final MockMultipartFile document = new MockMultipartFile("file", "Signature_Dsig_enveloppee_document_modifie.xml",
+                null, Thread.currentThread().getContextClassLoader().getResourceAsStream("Signature_Dsig_enveloppee_document_modifie.xml"));
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/xmldsig").file(document)
                 .param("idVerifSignConf", "1").accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
 
