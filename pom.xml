@@ -428,7 +428,7 @@
 				<ldap.server.url>ldap://annuaire-igc.esante.gouv.fr:389</ldap.server.url>
 				<docker.registry>registry.repo.asip.asipsante.fr</docker.registry>
 				<!--<image.registry>esignsante-registry.repo.artifactory-interne.henix.asipsante.fr</image.registry>-->
-				<image.registry>esignsante-registry.repo.docker.asip.hst.fluxus.net</image.registry>
+				<image.registry>registry.repo.docker.asip.hst.fluxus.net</image.registry>
 			</properties>
 			<distributionManagement>
 				<repository>
