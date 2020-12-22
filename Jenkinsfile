@@ -1,3 +1,3 @@
 @Library('AnsPipeline') _
 
-AnsPipelineJdk11Mvn36(svnCredentialsId: "TRA", mailList: "TRA")
+AnsPipelineJdk8Mvn354(svnCredentialsId: "TRA", mailList: "TRA")
