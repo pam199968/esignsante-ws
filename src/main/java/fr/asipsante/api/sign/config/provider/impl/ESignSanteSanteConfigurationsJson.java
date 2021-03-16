@@ -201,7 +201,6 @@ public class ESignSanteSanteConfigurationsJson implements IeSignSanteConfigurati
                     String newChecksum = getFileChecksum(md5Digest, file);
                     if (newChecksum.equals(checksum)) {
                         log.debug("pas de nouvelle configuration détecté");
-                        continue;
                     } else {
                         log.debug("une nouvelle configuration a été détecté");
                         checksum = newChecksum;
