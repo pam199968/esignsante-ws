@@ -29,6 +29,7 @@ import fr.asipsante.api.sign.ws.model.ESignSanteSignatureReport;
 import fr.asipsante.api.sign.ws.model.ESignSanteSignatureReportWithProof;
 import fr.asipsante.api.sign.ws.model.Erreur;
 import fr.asipsante.api.sign.ws.model.Metadata;
+import fr.asipsante.api.sign.ws.util.ESignatureType;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -108,7 +109,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      */
     private ResponseEntity<ESignSanteSignatureReportWithProof> digitalSignatureWithProof(
             final String secret, final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf,
-            final ProofParameters proofParameters, final boolean isXades) {
+            final ProofParameters proofParameters, final ESignatureType type, final List<String> signers) {
         final Optional<String> acceptHeader = getAcceptHeader();
         ResponseEntity<ESignSanteSignatureReportWithProof> re = new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
         // get configurations
@@ -132,9 +133,10 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                     log.error(HttpStatus.UNAUTHORIZED.getReasonPhrase());
                 } else {
                     final SignatureParameters signParams = signConf.get().getSignParams();
+                    signParams.setRoles(signers);
                     final SignatureValidationParameters signVerifParams = verifConf.get().getSignVerifParams();
                     final SignatureParameters signProofParams = signProofConf.get().getSignProofParams();
-                    re = signWithProof(doc, proofParameters, isXades, signParams, signVerifParams,
+                    re = signWithProof(doc, proofParameters, type, signParams, signVerifParams,
                             signProofParams);
                     log.info("Digital Signature With Proof Generated : {}", HttpStatus.OK.getReasonPhrase());
                 }
@@ -155,7 +157,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      * @return the response entity
      */
     private ResponseEntity<ESignSanteSignatureReportWithProof> signWithProof(
-            final MultipartFile doc, final ProofParameters proofParameters, final boolean isXades,
+            final MultipartFile doc, final ProofParameters proofParameters, final ESignatureType type,
             final SignatureParameters signParams, final SignatureValidationParameters signValidationParameters,
             final SignatureParameters signProofParams) {
         ResponseEntity<ESignSanteSignatureReportWithProof> re;
@@ -168,12 +170,18 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 final RapportSignature rapportSignature;
                 final RapportValidationSignature rapportVerifSignature;
                 // Signature du document
-                if (isXades) {
+                if (ESignatureType.XADES.equals(type)) {
                     rapportSignature = signatureService.signXADESBaselineB(doc.getBytes(), signParams);
                     // Validation de la signature
                     rapportVerifSignature = signatureValidationService.validateXADESBaseLineBSignature(
                             rapportSignature.getDocSigne(), signValidationParameters, serviceCaCrl.getCacrlWrapper());
-
+                } else if (ESignatureType.PADES.equals(type)) { 
+                    rapportSignature = signatureService.signPADESBaselineB(doc.getBytes(), signParams);
+                    // Validation de la signature
+                    // TODO
+                    rapportVerifSignature = null;
+                    //rapportVerifSignature = signatureValidationService.validateXADESBaseLineBSignature(
+                    //        rapportSignature.getDocSigne(), signValidationParameters, serviceCaCrl.getCacrlWrapper());
                 } else {
                     rapportSignature = signatureService.signXMLDsig(doc.getBytes(), signParams);
                     // Validation de la signature
@@ -253,7 +261,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     }
 
     /**
-     * Signature XM ldsig with proof.
+     * Signature XMldsig with proof.
      *
      * @param idSignConf      the id sign conf
      * @param doc             the doc
@@ -267,7 +275,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     @Override
     public ResponseEntity<ESignSanteSignatureReportWithProof> signatureXMLdsigWithProof(
             final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf, final String requestId,
-            final String proofTag, final String applicantId, final String secret) {
+            final String proofTag, final String applicantId, final String secret, final List<String> signers) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             // get version object for proof generation
@@ -277,7 +285,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag,
                 applicantId, calledOperation("/signatures/xmldsigwithproof"), wsVersion);
-        return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, false);
+        return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.XMLDSIG, signers);
     }
 
     /**
@@ -295,7 +303,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     @Override
     public ResponseEntity<ESignSanteSignatureReportWithProof> signatureXadesWithProof(
             final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf, final String requestId,
-            final String proofTag, final String applicantId, final String secret) {
+            final String proofTag, final String applicantId, final String secret, List<String> signers) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             // get version object for proof generation
@@ -305,7 +313,35 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag,
                 applicantId, calledOperation("/signatures/xadesbaselinebwithproof"), wsVersion);
-        return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, true);
+        return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.XADES, signers);
+    }
+    
+    /**
+     * Signature pades with proof.
+     *
+     * @param idSignConf      the id sign conf
+     * @param doc             the doc
+     * @param idVerifSignConf the id verif sign conf
+     * @param requestId       the request id
+     * @param proofTag        the proof tag
+     * @param applicantId     the applicant id
+     * @param secret          the secret
+     * @return the response entity
+     */
+    @Override
+    public ResponseEntity<ESignSanteSignatureReportWithProof> signaturePadesWithProof(
+            final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf, final String requestId,
+            final String proofTag, final String applicantId, final String secret, List<String> signers) {
+        Version wsVersion = DEFAULT_VERSION;
+        try {
+            // get version object for proof generation
+            wsVersion = new Version(buildProperties.getVersion());
+        } catch (final ParseException e) {
+            log.error(ExceptionUtils.getStackTrace(e));
+        }
+        final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag,
+                applicantId, calledOperation("/signatures/padesbaselinebwithproof"), wsVersion);
+        return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.PADES, signers);
     }
 
     /**
@@ -318,7 +354,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      * @return the response entity
      */
     private ResponseEntity<ESignSanteSignatureReport> digitalSignature(final String secret, final Long idSignConf,
-                                                                       final MultipartFile doc, final boolean isXades) {
+                                                                       final MultipartFile doc, final ESignatureType type, final List<String> signers) {
         final Optional<String> acceptHeader = getAcceptHeader();
         ResponseEntity<ESignSanteSignatureReport> re = new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
         if (idSignConf != null && doc != null) {
@@ -333,7 +369,8 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                     log.error(HttpStatus.UNAUTHORIZED.getReasonPhrase());
                 } else {
                     final SignatureParameters signParams = signConf.get().getSignParams();
-                    re = sign(signParams, doc, isXades);
+					signParams.setRoles(signers);
+					re = sign(signParams, doc, type);
                     log.info("Digital Signature : {}", HttpStatus.OK.getReasonPhrase());
                 }
             }
@@ -352,7 +389,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      * @return the response entity
      */
     private ResponseEntity<ESignSanteSignatureReport> sign(final SignatureParameters signParams,
-                                                           final MultipartFile doc, final boolean isXades) {
+                                                           final MultipartFile doc, final ESignatureType type) {
         ResponseEntity<ESignSanteSignatureReport> re;
         try {
             // Contrôle du certificat de signature
@@ -362,13 +399,15 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
             } else {
                 // Signature
                 final RapportSignature rapportSignature;
-                if (isXades) {
+                if (ESignatureType.XADES.equals(type)) {
                     rapportSignature = signatureService.signXADESBaselineB(doc.getBytes(), signParams);
+                } else if (ESignatureType.PADES.equals(type)) {
+                	rapportSignature = signatureService.signPADESBaselineB(doc.getBytes(), signParams);
                 } else {
                     rapportSignature = signatureService.signXMLDsig(doc.getBytes(), signParams);
                 }
                 final ESignSanteSignatureReport rapport = populateResultSign(rapportSignature.getListeErreurSignature(),
-                        rapportSignature.getDocSigne());
+                        rapportSignature.getDocSigneBytes());
                 re = new ResponseEntity<>(rapport, HttpStatus.OK);
             }
         } catch (final AsipSignClientException e2) {
@@ -385,7 +424,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     }
 
     /**
-     * Signature XM ldsig.
+     * Signature XMLDsig.
      *
      * @param idSignConf the id sign conf
      * @param doc        the doc
@@ -394,8 +433,8 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      */
     @Override
     public ResponseEntity<ESignSanteSignatureReport> signatureXMLdsig(final Long idSignConf, final MultipartFile doc,
-                                                                final String secret) {
-        return digitalSignature(secret, idSignConf, doc, false);
+                                                                final String secret, List<String> signers) {
+        return digitalSignature(secret, idSignConf, doc, ESignatureType.XMLDSIG, signers);
     }
 
     /**
@@ -408,8 +447,22 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      */
     @Override
     public ResponseEntity<ESignSanteSignatureReport> signatureXades(final Long idSignConf, final MultipartFile doc,
-                                                              final String secret) {
-        return digitalSignature(secret, idSignConf, doc, true);
+                                                              final String secret, List<String> signers) {
+        return digitalSignature(secret, idSignConf, doc, ESignatureType.XADES, signers);
+    }
+    
+    /**
+     * Signature pades.
+     *
+     * @param idSignConf the id sign conf
+     * @param doc        the doc
+     * @param secret     the secret
+     * @return the response entity
+     */
+    @Override
+    public ResponseEntity<ESignSanteSignatureReport> signaturePades(final Long idSignConf, final MultipartFile doc,
+                                                              final String secret, List<String> signers) {
+        return digitalSignature(secret, idSignConf, doc, ESignatureType.PADES, signers);
     }
 
     /**
@@ -420,9 +473,9 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      * @return the fr.asipsante.api.sign.ws.model. rapport signature
      */
     private ESignSanteSignatureReport populateResultSign(final List<ErreurSignature> erreursSignature,
-                                                   final String signedDocument) {
-        final ESignSanteSignatureReport rapport = new ESignSanteSignatureReport();
-        rapport.setDocSigne(Base64.getEncoder().encodeToString(signedDocument.getBytes()));
+                                                   final byte[] signedDocument) {
+        final ESignSanteSignatureReport rapport = new ESignSanteSignatureReport(); 
+        rapport.setDocSigne(Base64.getEncoder().encodeToString(signedDocument));
         final List<Erreur> erreurs = new ArrayList<>();
         for (final ErreurSignature erreurANS : erreursSignature) {
             final Erreur erreur = new Erreur();

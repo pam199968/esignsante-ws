@@ -14,7 +14,7 @@ info:
    description: "API du composant eSignSante. <br>Ce composant dit de \"signature\" mutualise et homogénéise la mise en oeuvre\
       \ des besoins autour de la signature. <br>Il permet de signer des documents ainsi que\
       \ de vérifier la validité d'une signature ou d'un certificat.    <br>"
-   version: 2.3.0.0
+   version: 2.5.0.0
    title: eSignSante
    contact:
       email: esignsante@asipsante.fr
@@ -32,6 +32,9 @@ tags:
 -  name: xades
    description: Ressources permettant de signer un document au format Xades Baseline B et/ou de vérifier un flux signé en
       XADES Baseline B avec ou sans preuve.
+-  name: pades
+   description: Ressources permettant de signer un document au format Pades Baseline B et/ou de vérifier un flux signé en
+      PADES Baseline B avec ou sans preuve.
 -  name: certificats
    description: Ressources permettant de vérifier un certificat avec ou sans preuve.
 paths:
@@ -238,6 +241,83 @@ paths:
          summary: Signature d'un document au format Xades Baseline B avec preuve.
          operationId: signatureXadesWithProof
          description: "L'opération permet au client de signer un document au format XADES Baseline B ainsi que de générer une\
+            \ preuve de vérification de signature.<br> Le client peut demander la vérification des règles applicables suivantes:<br>\
+            \  &nbsp;&nbsp;&nbsp;validité de la signature du certificat;<br>&nbsp;&nbsp;&nbsp;présence de la balise \"SigningTime\" dans la signature;<br>&nbsp;&nbsp;&nbsp;\
+            \ présence du certificat utilisé dans la signature; <br>&nbsp;&nbsp;&nbsp;le certificat de signature n'est pas expiré; <br>&nbsp;&nbsp;&nbsp;l'usage\
+            \ de la clé du certificat correspond à un usage de signature électronique et de non répudiation;<br>&nbsp;&nbsp;&nbsp;le certificat\
+            \ de signature n'est pas révoqué; <br>&nbsp;&nbsp;&nbsp;présence d'une signature qui n'est pas vide; <br>&nbsp;&nbsp;&nbsp;l'Autorité de Certification\
+            \ est reconnue;<br>&nbsp;&nbsp;&nbsp;le contenu de la signature est valide;<br><br>  Le client peut également demander l'extraction des\
+            \ métadonnées suivantes: <br>&nbsp;&nbsp;&nbsp;le DN du certificat;<br>&nbsp;&nbsp;&nbsp;la date de signature;<br>&nbsp;&nbsp;&nbsp;le rapport du diagnostique;<br>\
+            \ &nbsp;&nbsp;&nbsp;le document original non signé.<br>"
+         requestBody:
+            content:
+               multipart/form-data:
+                  schema:
+                     $ref: '#/components/schemas/SignDocumentWithProof'
+            required: true
+         responses:
+            '200':
+               description: Requête en succès.
+               content:
+                  application/json:
+                     schema:
+                        type: object
+                        $ref: '#/components/schemas/ESignSanteSignatureReportWithProof'
+            '400':
+               description: Requête mal formée.
+            '401':
+               description: Une authentification est nécessaire pour accéder à la ressource (secret incorrect).
+            '404':
+               description: Ressource introuvable (identifiant de configuration qui n'existe pas par exemple).
+            '500':
+               description: Erreur interne du serveur.
+            '501':
+               description: L'opération n'est pas supportée par le serveur (soumission d'un document qui n'est pas au format
+                  XML pour une signature enveloppée par exemple).
+            '503':
+               description: Le service n'est pas disponible.
+   /signatures/padesbaselineb:
+      post:
+#         tags:
+#         - pades
+         summary: Signature d'un document au format Pades Baseline B.
+         operationId: signaturePades
+         description: |
+            L'opération permet au client de signer un document PDF au format PADES Baseline B.
+         requestBody:
+            content:
+               multipart/form-data:
+                  schema:
+                     $ref: '#/components/schemas/SignDocument'
+            required: true
+         responses:
+            '200':
+               description: Requête en succès.
+               content:
+                  application/json:
+                     schema:
+                        type: object
+                        $ref: '#/components/schemas/ESignSanteSignatureReport'
+            '400':
+               description: Requête mal formée.
+            '401':
+               description: Une authentification est nécessaire pour accéder à la ressource (secret incorrect).
+            '404':
+               description: Ressource introuvable (identifiant de configuration qui n'existe pas par exemple).
+            '500':
+               description: Erreur interne du serveur.
+            '501':
+               description: L'opération n'est pas supportée par le serveur (soumission d'un document qui n'est pas au format
+                  XML pour une signature enveloppée par exemple).
+            '503':
+               description: Le service n'est pas disponible.
+   /signatures/padesbaselinebwithproof:
+      post:
+#         tags:
+#         - pades
+         summary: Signature d'un document PDF au format Pades Baseline B avec preuve.
+         operationId: signaturePadesWithProof
+         description: "L'opération permet au client de signer un document au format PADES Baseline B ainsi que de générer une\
             \ preuve de vérification de signature.<br> Le client peut demander la vérification des règles applicables suivantes:<br>\
             \  &nbsp;&nbsp;&nbsp;validité de la signature du certificat;<br>&nbsp;&nbsp;&nbsp;présence de la balise \"SigningTime\" dans la signature;<br>&nbsp;&nbsp;&nbsp;\
             \ présence du certificat utilisé dans la signature; <br>&nbsp;&nbsp;&nbsp;le certificat de signature n'est pas expiré; <br>&nbsp;&nbsp;&nbsp;l'usage\
@@ -585,6 +665,11 @@ components:
                description: Document à signer.
                type: string
                format: binary
+            signers:
+               type: array
+               description: Liste des signataires délégataires. 
+               items:
+                  type: string
       SignDocumentWithProof:
          type: object
          required:
@@ -608,6 +693,11 @@ components:
                description: Document à signer.
                type: string
                format: binary
+            signers:
+               type: array
+               description: Liste des signataires délégataires. 
+               items:
+                  type: string
             idVerifSignConf:
                description: Identifiant de configuration à sélectionner parmi la liste des configurations disponibles pour
                   la vérification de signature (appel de l'opération "/configurations").

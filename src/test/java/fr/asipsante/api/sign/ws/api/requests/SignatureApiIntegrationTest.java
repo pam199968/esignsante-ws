@@ -48,6 +48,9 @@ public class SignatureApiIntegrationTest {
 
     /** The xml. */
     private MockMultipartFile xml;
+    
+    /** The pdf. */
+    private MockMultipartFile pdf; 
 
     /** The texte. */
     private MockMultipartFile texte;
@@ -73,8 +76,12 @@ public class SignatureApiIntegrationTest {
         xml = new MockMultipartFile("file", "Fichier_TOMWS2_SANS_SIGNATURE_ISO-8859-15.xml", null,
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("Fichier_TOMWS2_SANS_SIGNATURE_ISO-8859-15.xml"));
 
+        pdf = new MockMultipartFile("file", "ANS_EDB_POC_OUVERTURE_ESIGNSANTE_V1.0.pdf", null,
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("ANS_EDB_POC_OUVERTURE_ESIGNSANTE_V1.0.pdf"));
+        
         texte = new MockMultipartFile("file", "toBeSigned.txt", null,
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("toBeSigned.txt"));
+        
         assertNotNull("Le fichier n'a pas été lu.", xml);
         assertNotNull("Le fichier n'a pas été lu.", texte);
     }
@@ -153,6 +160,24 @@ public class SignatureApiIntegrationTest {
     public void signatureXMLdsigTestNoProof() throws Exception {
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/xmldsig").file(xml).param("secret", "123456")
                 .param("idSignConf", "1").accept("application/json")).andExpect(status().is2xxSuccessful())
+                .andDo(print()).andReturn();
+
+        final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
+        assertEquals("La Liste des erreurs n'est pas vide", 0, body.getJSONArray("erreurs").length());
+        assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 2, body.names().length());
+
+    }
+    
+    /**
+     * Cas passant signature XMLDSIG sans preuve avec signers.
+     * Les signers ne devraient pas être pris en compte.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void signatureXMLdsigTestNoProofWithSigners() throws Exception {
+        final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/xmldsig").file(xml).param("secret", "123456")
+                .param("idSignConf", "1").param("signers", "signer1", "signer2").accept("application/json")).andExpect(status().is2xxSuccessful())
                 .andDo(print()).andReturn();
 
         final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
@@ -262,6 +287,22 @@ public class SignatureApiIntegrationTest {
     @Test
     public void signatureXadesTest() throws Exception {
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/xadesbaselineb").file(xml)
+                .param("secret", "123456").param("idSignConf", "1").accept("application/json"))
+                .andExpect(status().is2xxSuccessful()).andDo(print()).andReturn();
+
+        final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
+        assertEquals("La Liste des erreurs n'est pas vide", 0, body.getJSONArray("erreurs").length());
+        assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 2, body.names().length());
+    }
+    
+    /**
+     * Cas passant signature PADES sans preuve.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void signaturePadesTest() throws Exception {
+        final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/padesbaselineb").file(pdf)
                 .param("secret", "123456").param("idSignConf", "1").accept("application/json"))
                 .andExpect(status().is2xxSuccessful()).andDo(print()).andReturn();
 
