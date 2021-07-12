@@ -31,6 +31,7 @@ import fr.asipsante.api.sign.ws.model.ESignSanteValidationReport;
 import fr.asipsante.api.sign.ws.model.ESignSanteValidationReportWithProof;
 import fr.asipsante.api.sign.ws.model.Erreur;
 import fr.asipsante.api.sign.ws.model.Metadata;
+import fr.asipsante.api.sign.ws.util.ESignatureType;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -110,7 +111,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
      */
     private ResponseEntity<ESignSanteValidationReportWithProof> validateDigitalSignatureWithProof(
             final Long idVerifSignConf, final MultipartFile doc, final ProofParameters proofParameters,
-            final Long idProofConf, final boolean isXades) {
+            final Long idProofConf, ESignatureType type) {
         final Optional<String> acceptHeader = getAcceptHeader();
         ResponseEntity<ESignSanteValidationReportWithProof> re = new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
@@ -126,7 +127,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
                 } else {
                     final SignatureValidationParameters signVerifParams = verifConf.get().getSignVerifParams();
                     final SignatureParameters signProofParams = signProofConf.get().getSignProofParams();
-                    re = validateWithProof(doc, proofParameters, isXades, signVerifParams,
+                    re = validateWithProof(doc, proofParameters, type, signVerifParams,
                             signProofParams);
                     log.info("Validate Digital Signature With Proof Generated : {}", HttpStatus.OK.getReasonPhrase());
                 }
@@ -140,18 +141,18 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
      *
      * @param doc                      the doc
      * @param proofParameters          the proof parameters
-     * @param isXades                  the is xades
+     * @param type                     the signature type
      * @param signValidationParameters the sign validation parameters
      * @param signProofParams          the sign proof params
      * @return the response entity
      */
     private ResponseEntity<ESignSanteValidationReportWithProof> validateWithProof(
-            final MultipartFile doc, final ProofParameters proofParameters, final boolean isXades,
+            final MultipartFile doc, final ProofParameters proofParameters, ESignatureType type,
             final SignatureValidationParameters signValidationParameters, final SignatureParameters signProofParams) {
         ResponseEntity<ESignSanteValidationReportWithProof> re;
         try {
             // Validation de la signature du document
-            final RapportValidationSignature rapportVerifSignANS = genSignVerifReport(doc, isXades,
+            final RapportValidationSignature rapportVerifSignANS = genSignVerifReport(doc, type,
                     signValidationParameters);
 
             // Génération de la preuve
@@ -221,7 +222,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag, applicantId,
                 calledOperation("/validation/signatures/xmldsigwithproof"), wsVersion);
-        return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, false);
+        return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XMLDSIG);
     }
 
     /**
@@ -247,7 +248,33 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag, applicantId,
                 calledOperation("/validation/signatures/xadesbaselinebwithproof"), wsVersion);
-        return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, true);
+        return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XADES);
+    }
+    
+    /**
+     * Verif signature pades with proof.
+     *
+     * @param idVerifSignConf the id verif sign conf
+     * @param doc             the doc
+     * @param requestId       the request id
+     * @param proofTag        the proof tag
+     * @param applicantId     the applicant id
+     * @param idProofConf     the id proof conf
+     * @return the response entity
+     */
+    @Override
+    public ResponseEntity<ESignSanteValidationReportWithProof> verifSignaturePadesWithProof(
+            final Long idVerifSignConf, final MultipartFile doc, final String requestId, final String proofTag,
+            final String applicantId, final Long idProofConf) {
+        Version wsVersion = DEFAULT_VERSION;
+        try {
+            wsVersion = new Version(buildProperties.getVersion());
+        } catch (final ParseException e) {
+            log.error(ExceptionUtils.getStackTrace(e));
+        }
+        final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag, applicantId,
+                calledOperation("/validation/signatures/padesbaselinebwithproof"), wsVersion);
+        return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.PADES);
     }
 
     /**
@@ -255,11 +282,11 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
      *
      * @param idVerifSignConf the id verif sign conf
      * @param doc             the doc
-     * @param isXades         the is xades
+     * @param type            the signature type
      * @return the response entity
      */
     private ResponseEntity<ESignSanteValidationReport> validateDigitalSignature(
-            final Long idVerifSignConf, final MultipartFile doc, final boolean isXades) {
+            final Long idVerifSignConf, final MultipartFile doc, ESignatureType type) {
         final Optional<String> acceptHeader = getAcceptHeader();
         ResponseEntity<ESignSanteValidationReport> re = new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
@@ -273,7 +300,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
                 log.error("Configuration {}" , HttpStatus.NOT_FOUND.getReasonPhrase());
             } else {
                 final SignatureValidationParameters signVerifParams = verifConf.get().getSignVerifParams();
-                re = validate(doc, isXades, signVerifParams);
+                re = validate(doc, type, signVerifParams);
                 log.info("Validate Digital Signature : {}", HttpStatus.OK.getReasonPhrase());
             }
         }
@@ -284,17 +311,17 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
      * Validate.
      *
      * @param doc                      the doc
-     * @param isXades                  the is xades
+     * @param type                     the signature type
      * @param signValidationParameters the sign validation parameters
      * @return the response entity
      */
     private ResponseEntity<ESignSanteValidationReport> validate(
-            final MultipartFile doc, final boolean isXades,
+            final MultipartFile doc, ESignatureType type,
             final SignatureValidationParameters signValidationParameters) {
         ResponseEntity<ESignSanteValidationReport> re;
         try {
             // Validation de la signature du document
-            final RapportValidationSignature rapportVerifSignANS = genSignVerifReport(doc, isXades,
+            final RapportValidationSignature rapportVerifSignANS = genSignVerifReport(doc, type,
                     signValidationParameters);
             final ESignSanteValidationReport rapport = populateResultSign(rapportVerifSignANS.getListeErreurSignature(),
                     rapportVerifSignANS.getMetaData(), rapportVerifSignANS.isValide());
@@ -323,7 +350,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
     @Override
     public ResponseEntity<ESignSanteValidationReport> verifSignatureXMLdsig(final Long idVerifSignConf,
                                                                       final MultipartFile doc) {
-        return validateDigitalSignature(idVerifSignConf, doc, false);
+        return validateDigitalSignature(idVerifSignConf, doc, ESignatureType.XMLDSIG);
     }
 
     /**
@@ -336,28 +363,44 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
     @Override
     public ResponseEntity<ESignSanteValidationReport> verifSignatureXades(final Long idVerifSignConf,
                                                                     final MultipartFile doc) {
-        return validateDigitalSignature(idVerifSignConf, doc, true);
+        return validateDigitalSignature(idVerifSignConf, doc, ESignatureType.XADES);
+    }
+    
+    /**
+     * Verif signature pades.
+     *
+     * @param idVerifSignConf the id verif sign conf
+     * @param doc             the doc
+     * @return the response entity
+     */
+    @Override
+    public ResponseEntity<ESignSanteValidationReport> verifSignaturePades(final Long idVerifSignConf,
+                                                                    final MultipartFile doc) {
+        return validateDigitalSignature(idVerifSignConf, doc, ESignatureType.PADES);
     }
 
     /**
      * Generate rapport validation signature.
      *
      * @param doc original document
-     * @param isXades Xades or D-sig
+     * @param type Xades, Pades or D-sig
      * @param signValidationParameters signature validation parameters
      * @return RapportValidationSignature
      * @throws IOException stream file exception
      * @throws AsipSignException asipsign exception
      */
     private RapportValidationSignature genSignVerifReport(
-            final MultipartFile doc, final boolean isXades,
+            final MultipartFile doc, ESignatureType type,
             final SignatureValidationParameters signValidationParameters)
             throws IOException, AsipSignException {
 
         // Validation de la signature du document
         final RapportValidationSignature rapportVerifSignANS;
-        if (isXades) {
+        if (ESignatureType.XADES.equals(type)) {
             rapportVerifSignANS = signatureValidationService.validateXADESBaseLineBSignature(doc.getBytes(),
+                    signValidationParameters, serviceCaCrl.getCacrlWrapper());
+        } else if(ESignatureType.PADES.equals(type)) {
+        	rapportVerifSignANS = signatureValidationService.validatePADESBaseLineBSignature(doc.getBytes(),
                     signValidationParameters, serviceCaCrl.getCacrlWrapper());
         } else {
             rapportVerifSignANS = signatureValidationService.validateXMLDsigSignature(doc.getBytes(),

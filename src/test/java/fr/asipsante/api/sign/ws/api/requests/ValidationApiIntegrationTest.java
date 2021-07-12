@@ -50,6 +50,9 @@ public class ValidationApiIntegrationTest {
 
     /** The doc. */
     private MockMultipartFile doc;
+    
+    /** The pdf. */
+    private MockMultipartFile pdf;
 
     static {
         final String confPath;
@@ -71,6 +74,9 @@ public class ValidationApiIntegrationTest {
     public void init() throws Exception {
         doc = new MockMultipartFile("file", "doc_signe_xades_ISO-8859-15.xml", null,
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("doc_signe_xades_ISO-8859-15.xml"));
+        
+        pdf = new MockMultipartFile("file", "doc_signe_pades.pdf", null,
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("doc_signe_pades.pdf"));
     }
 
     /**
@@ -101,6 +107,25 @@ public class ValidationApiIntegrationTest {
     public void verifSignXadesBaselineBTest() throws Exception {
 
         final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/xadesbaselinebwithproof").file(doc)
+                .param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
+                .param("applicantId", "RPPS").param("idProofConf", "1").accept("application/json"))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
+        assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 4, body.names().length());
+        assertEquals("La Liste des erreurs devrait contenir 1 erreur", 1, body.getJSONArray("erreurs").length());
+        assertTrue("Le code erreur attendu n'est pas le bon", body.getJSONArray("erreurs").get(0).toString().endsWith("\"codeErreur\":\"ERDOCN01\"}"));
+    }
+    
+    /**
+     * Cas passant validation PADES.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void verifSignPadesBaselineBTest() throws Exception {
+
+        final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf)
                 .param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
                 .param("applicantId", "RPPS").param("idProofConf", "1").accept("application/json"))
                 .andExpect(status().isOk()).andDo(print()).andReturn();

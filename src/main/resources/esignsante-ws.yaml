@@ -511,6 +511,85 @@ paths:
                   pas au format XML).
             '503':
                description: Le service n'est pas disponible.
+   /validation/signatures/padesbaselineb:
+      post:
+#         tags:
+#         - xades
+         summary: Vérification de signature au format Pades Baseline B.
+         operationId: verifSignaturePades
+         description: "L'opération permet au client de vérifier une signature au format Pades Baseline B. <br>  Le client peut\
+            \ demander la vérification des règles applicables suivantes:<br>&nbsp;&nbsp;&nbsp;validité de la signature du certificat;<br>&nbsp;&nbsp;&nbsp;Pré\
+            sence de la balise \"SigningTime\" dans la signature;<br>&nbsp;&nbsp;&nbsp;présence du certificat utilisé dans la signature; <br>\
+            \  &nbsp;&nbsp;&nbsp;le certificat de signature n'est pas expiré; <br>&nbsp;&nbsp;&nbsp;l'usage de la clé du certificat correspond à un usage de\
+            \ signature électronique et de non répudiation;<br>&nbsp;&nbsp;&nbsp;le certificat de signature n'est pas révoqué; <br>&nbsp;&nbsp;&nbsp;présence d'une\
+            \ signature qui n'est pas vide; <br>&nbsp;&nbsp;&nbsp;l'Autorité de Certification est reconnue;<br>&nbsp;&nbsp;&nbsp;le contenu de la signature est\
+            \ valide;<br><br>  Le client peut également demander l'extraction des métadonnées suivantes: <br>&nbsp;&nbsp;&nbsp;le DN du certificat;<br>\
+            \ &nbsp;&nbsp;&nbsp;la date de signature;<br>&nbsp;&nbsp;&nbsp;le rapport du diagnostique;<br>&nbsp;&nbsp;&nbsp;le document original non signé.<br>"
+         requestBody:
+            content:
+               multipart/form-data:
+                  schema:
+                     $ref: '#/components/schemas/VerifSignDocument'
+            required: true
+         responses:
+            '200':
+               description: Requête en succès.
+               content:
+                  application/json:
+                     schema:
+                        type: object
+                        $ref: '#/components/schemas/ESignSanteValidationReport'
+            '400':
+               description: Requête mal formée.
+            '404':
+               description: Ressource introuvable (identifiant de configuration qui n'existe pas par exemple).
+            '500':
+               description: Erreur interne du serveur.
+            '501':
+               description: L'opération n'est pas supportée par le serveur (soumission d'un document qui n'est pas au format
+                  PDF par exemple).
+            '503':
+               description: Le service n'est pas disponible.
+   /validation/signatures/padesbaselinebwithproof:
+      post:
+#         tags:
+#         - xades
+         summary: Vérification de signature au format Pades Baseline B avec preuve.
+         operationId: verifSignaturePadesWithProof
+         description: "L'opération permet au client de vérifier une signature au format Pades Baseline B ainsi que de générer\
+            \ une preuve de vérification. <br>  Le client peut demander la vérification des règles applicables suivantes:<br> \
+            \ &nbsp;&nbsp;&nbsp;validité de la signature du certificat;<br>&nbsp;&nbsp;&nbsp;présence de la balise \"SigningTime\" dans la signature;<br>&nbsp;&nbsp;&nbsp;pré\
+            sence du certificat utilisé dans la signature; <br>&nbsp;&nbsp;&nbsp;le certificat de signature n'est pas expiré; <br>&nbsp;&nbsp;&nbsp;l'usage de\
+            \ la clé du certificat correspond à un usage de signature électronique et de non répudiation;<br>&nbsp;&nbsp;&nbsp;le certificat\
+            \ de signature n'est pas révoqué; <br>&nbsp;&nbsp;&nbsp;présence d'une signature qui n'est pas vide; <br>&nbsp;&nbsp;&nbsp;l'Autorité de Certification\
+            \ est reconnue;<br>&nbsp;&nbsp;&nbsp;le contenu de la signature est valide;<br><br>  Le client peut également demander l'extraction des\
+            \ métadonnées suivantes: <br>&nbsp;&nbsp;&nbsp;le DN du certificat;<br>&nbsp;&nbsp;&nbsp;la date de signature;<br>&nbsp;&nbsp;&nbsp;le rapport du diagnostique;<br>  \
+            \ &nbsp;&nbsp;&nbsp;le document original non signé.<br>"
+         requestBody:
+            content:
+               multipart/form-data:
+                  schema:
+                     $ref: '#/components/schemas/VerifSignDocumentWithProof'
+            required: true
+         responses:
+            '200':
+               description: Requête en succès.
+               content:
+                  application/json:
+                     schema:
+                        type: object
+                        $ref: '#/components/schemas/ESignSanteValidationReportWithProof'
+            '400':
+               description: Requête mal formée.
+            '404':
+               description: Ressource introuvable (identifiant de configuration qui n'existe pas par exemple).
+            '500':
+               description: Erreur interne du serveur.
+            '501':
+               description: L'opération n'est pas supportée par le serveur (demande de validation d'un document qui n'est
+                  pas au format PDF).
+            '503':
+               description: Le service n'est pas disponible.
    /validation/certificats:
       post:
 #         tags:

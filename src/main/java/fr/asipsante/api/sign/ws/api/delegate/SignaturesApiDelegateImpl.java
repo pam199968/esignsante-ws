@@ -104,7 +104,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      * @param doc             the doc
      * @param idVerifSignConf the id verif sign conf
      * @param proofParameters the proof parameters
-     * @param isXades         the is xades
+     * @param type            the signature type
      * @return the response entity
      */
     private ResponseEntity<ESignSanteSignatureReportWithProof> digitalSignatureWithProof(
@@ -150,7 +150,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      *
      * @param doc                      the doc
      * @param proofParameters          the proof parameters
-     * @param isXades                  the is xades
+     * @param type                     the signature type
      * @param signParams               the sign params
      * @param signValidationParameters the sign validation parameters
      * @param signProofParams          the sign proof params
@@ -350,7 +350,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      * @param secret     the secret
      * @param idSignConf the id sign conf
      * @param doc        the doc
-     * @param isXades    the is xades
+     * @param type       the signature type
      * @return the response entity
      */
     private ResponseEntity<ESignSanteSignatureReport> digitalSignature(final String secret, final Long idSignConf,
@@ -385,7 +385,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      *
      * @param signParams the signature parameters
      * @param doc        the doc
-     * @param isXades    the is xades
+     * @param type       the signature type
      * @return the response entity
      */
     private ResponseEntity<ESignSanteSignatureReport> sign(final SignatureParameters signParams,
