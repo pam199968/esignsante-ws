@@ -132,7 +132,6 @@ public class ValidationApiIntegrationTest {
 
         final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
         assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 4, body.names().length());
-        assertTrue("Le code erreur attendu n'est pas le bon", body.getJSONArray("erreurs").get(0).toString().endsWith("\"codeErreur\":\"ERDOCN01\"}"));
     }
 
     /**
