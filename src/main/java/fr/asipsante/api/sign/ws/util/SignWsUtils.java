@@ -7,6 +7,7 @@ package fr.asipsante.api.sign.ws.util;
 import fr.asipsante.api.sign.bean.cacrl.CACRLWrapper;
 import fr.asipsante.api.sign.bean.parameters.CertificateValidationParameters;
 import fr.asipsante.api.sign.bean.parameters.SignatureParameters;
+import fr.asipsante.api.sign.bean.proof.OpenIdTokenBean;
 import fr.asipsante.api.sign.bean.rapports.RapportValidationCertificat;
 import fr.asipsante.api.sign.service.ICertificateValidationService;
 import fr.asipsante.api.sign.service.impl.CertificateValidationServiceImpl;
@@ -18,6 +19,8 @@ import fr.asipsante.api.sign.validation.certificat.rules.impl.ExpirationCertific
 import fr.asipsante.api.sign.validation.certificat.rules.impl.NonRepudiation;
 import fr.asipsante.api.sign.validation.certificat.rules.impl.RevocationCertificat;
 import fr.asipsante.api.sign.validation.certificat.rules.impl.TrustedCertificat;
+import fr.asipsante.api.sign.ws.model.OpenidToken;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,5 +134,19 @@ public class SignWsUtils {
             LOG.error(ExceptionUtils.getStackTrace(e));
         }
         return status;
+    }
+    
+    public static List<OpenIdTokenBean> getOpenIdBeans(final List<OpenidToken> openidTokens) {
+        List<OpenIdTokenBean> listTokenBeans = new ArrayList<OpenIdTokenBean>();
+        if (openidTokens != null) {
+	        for(OpenidToken token: openidTokens) {
+	        	OpenIdTokenBean tokenBean = new OpenIdTokenBean();
+	        	tokenBean.setTokenValue(token.getTokenValue());
+	        	tokenBean.setTokenIntrospectionEndpoint(token.getTokenIntrospectionEndpoint());
+	        	tokenBean.setUserInfoEndpoint(token.getUserInfoEndpoint());
+	        	listTokenBeans.add(tokenBean);
+	        }
+        }
+        return listTokenBeans;
     }
 }

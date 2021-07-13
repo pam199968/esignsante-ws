@@ -794,6 +794,12 @@ components:
                description: Identifiant du demandeur utilisé pour renseigner le champ applicantId de la preuve.
                type: string
                pattern: ^[a-zA-Z_0-9\-]*$
+            openidTokens:
+               description: Liste de tokens openid mappés à leurs endpoints (tokenIntrospectionEndpoint et userInfoEndpoint).
+               type: array
+               items:
+                  type: object
+                  $ref: '#/components/schemas/OpenidToken'
       VerifCertDocument:
          type: object
          required:
@@ -896,6 +902,12 @@ components:
                   la génération de la preuve (appel de l'opération "/configurations").
                type: integer
                format: int64
+            openidTokens:
+               description: Liste de tokens openid mappés à leurs endpoints (tokenIntrospectionEndpoint et userInfoEndpoint).
+               type: array
+               items:
+                  type: object
+                  $ref: '#/components/schemas/OpenidToken'
       ConfSign:
          type: object
          required:
@@ -1036,6 +1048,19 @@ components:
             id:
                type: string
             description:
+               type: string
+      OpenidToken:
+         type: object
+         required:
+         - tokenValue
+         - tokenIntrospectionEndpoint
+         - userInfoEndpoint
+         properties:
+            tokenValue:
+               type: string
+            tokenIntrospectionEndpoint:
+               type: string
+            userInfoEndpoint:
                type: string
       ESignSanteSignatureReport:
          type: object

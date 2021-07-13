@@ -4,36 +4,14 @@
 
 package fr.asipsante.api.sign.ws.api.delegate;
 
-import fr.asipsante.api.sign.bean.errors.ErreurCertificat;
-import fr.asipsante.api.sign.bean.errors.ErreurSignature;
-import fr.asipsante.api.sign.bean.metadata.MetaDatum;
-import fr.asipsante.api.sign.bean.parameters.CertificateValidationParameters;
-import fr.asipsante.api.sign.bean.parameters.ProofParameters;
-import fr.asipsante.api.sign.bean.parameters.SignatureParameters;
-import fr.asipsante.api.sign.bean.parameters.SignatureValidationParameters;
-import fr.asipsante.api.sign.bean.rapports.RapportSignature;
-import fr.asipsante.api.sign.bean.rapports.RapportValidationCertificat;
-import fr.asipsante.api.sign.bean.rapports.RapportValidationSignature;
-import fr.asipsante.api.sign.enums.MetaDataType;
-import fr.asipsante.api.sign.service.*;
-import fr.asipsante.api.sign.service.impl.utils.Version;
-import fr.asipsante.api.sign.utils.AsipSignClientException;
-import fr.asipsante.api.sign.utils.AsipSignException;
-import fr.asipsante.api.sign.utils.AsipSignParseException;
-import fr.asipsante.api.sign.utils.AsipSignServerException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
 
-import fr.asipsante.api.sign.ws.api.ValidationApiDelegate;
-import fr.asipsante.api.sign.ws.bean.config.IGlobalConf;
-import fr.asipsante.api.sign.ws.bean.object.CertVerifConf;
-import fr.asipsante.api.sign.ws.bean.object.ProofConf;
-import fr.asipsante.api.sign.ws.bean.object.SignVerifConf;
-import fr.asipsante.api.sign.ws.model.ESignSanteValidationReport;
-import fr.asipsante.api.sign.ws.model.ESignSanteValidationReportWithProof;
-import fr.asipsante.api.sign.ws.model.Erreur;
-import fr.asipsante.api.sign.ws.model.Metadata;
-import fr.asipsante.api.sign.ws.util.ESignatureType;
-import fr.asipsante.api.sign.ws.util.SignWsUtils;
-import fr.asipsante.api.sign.ws.util.WsVars;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
@@ -46,13 +24,40 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import fr.asipsante.api.sign.bean.errors.ErreurCertificat;
+import fr.asipsante.api.sign.bean.errors.ErreurSignature;
+import fr.asipsante.api.sign.bean.metadata.MetaDatum;
+import fr.asipsante.api.sign.bean.parameters.CertificateValidationParameters;
+import fr.asipsante.api.sign.bean.parameters.ProofParameters;
+import fr.asipsante.api.sign.bean.parameters.SignatureParameters;
+import fr.asipsante.api.sign.bean.parameters.SignatureValidationParameters;
+import fr.asipsante.api.sign.bean.rapports.RapportSignature;
+import fr.asipsante.api.sign.bean.rapports.RapportValidationCertificat;
+import fr.asipsante.api.sign.bean.rapports.RapportValidationSignature;
+import fr.asipsante.api.sign.enums.MetaDataType;
+import fr.asipsante.api.sign.service.ICACRLService;
+import fr.asipsante.api.sign.service.ICertificateValidationService;
+import fr.asipsante.api.sign.service.IProofGenerationService;
+import fr.asipsante.api.sign.service.ISignatureService;
+import fr.asipsante.api.sign.service.ISignatureValidationService;
+import fr.asipsante.api.sign.service.impl.utils.Version;
+import fr.asipsante.api.sign.utils.AsipSignClientException;
+import fr.asipsante.api.sign.utils.AsipSignException;
+import fr.asipsante.api.sign.utils.AsipSignParseException;
+import fr.asipsante.api.sign.utils.AsipSignServerException;
+import fr.asipsante.api.sign.ws.api.ValidationApiDelegate;
+import fr.asipsante.api.sign.ws.bean.config.IGlobalConf;
+import fr.asipsante.api.sign.ws.bean.object.CertVerifConf;
+import fr.asipsante.api.sign.ws.bean.object.ProofConf;
+import fr.asipsante.api.sign.ws.bean.object.SignVerifConf;
+import fr.asipsante.api.sign.ws.model.ESignSanteValidationReport;
+import fr.asipsante.api.sign.ws.model.ESignSanteValidationReportWithProof;
+import fr.asipsante.api.sign.ws.model.Erreur;
+import fr.asipsante.api.sign.ws.model.Metadata;
+import fr.asipsante.api.sign.ws.model.OpenidToken;
+import fr.asipsante.api.sign.ws.util.ESignatureType;
+import fr.asipsante.api.sign.ws.util.SignWsUtils;
+import fr.asipsante.api.sign.ws.util.WsVars;
 
 /**
  * The Class ValidationApiDelegateImpl.
@@ -213,7 +218,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
     @Override
     public ResponseEntity<ESignSanteValidationReportWithProof> verifSignatureXMLdsigWithProof(
             final Long idVerifSignConf, final MultipartFile doc, final String requestId, final String proofTag,
-            final String applicantId, final Long idProofConf) {
+            final String applicantId, final Long idProofConf, final List<OpenidToken> openidTokens) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             wsVersion = new Version(buildProperties.getVersion());
@@ -222,6 +227,10 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag, applicantId,
                 calledOperation("/validation/signatures/xmldsigwithproof"), wsVersion);
+        
+        // Remplissage de la liste des beans OpenId
+        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+        
         return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XMLDSIG);
     }
 
@@ -239,7 +248,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
     @Override
     public ResponseEntity<ESignSanteValidationReportWithProof> verifSignatureXadesWithProof(
             final Long idVerifSignConf, final MultipartFile doc, final String requestId, final String proofTag,
-            final String applicantId, final Long idProofConf) {
+            final String applicantId, final Long idProofConf, final List<OpenidToken> openidTokens) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             wsVersion = new Version(buildProperties.getVersion());
@@ -248,6 +257,10 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag, applicantId,
                 calledOperation("/validation/signatures/xadesbaselinebwithproof"), wsVersion);
+        
+        // Remplissage de la liste des beans OpenId
+        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+        
         return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XADES);
     }
     
@@ -265,7 +278,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
     @Override
     public ResponseEntity<ESignSanteValidationReportWithProof> verifSignaturePadesWithProof(
             final Long idVerifSignConf, final MultipartFile doc, final String requestId, final String proofTag,
-            final String applicantId, final Long idProofConf) {
+            final String applicantId, final Long idProofConf, final List<OpenidToken> openidTokens) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             wsVersion = new Version(buildProperties.getVersion());
@@ -274,6 +287,10 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag, applicantId,
                 calledOperation("/validation/signatures/padesbaselinebwithproof"), wsVersion);
+        
+        // Remplissage de la liste des beans OpenId
+        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+   
         return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.PADES);
     }
 

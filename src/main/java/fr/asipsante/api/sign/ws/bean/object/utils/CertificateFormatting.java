@@ -4,16 +4,10 @@
 
 package fr.asipsante.api.sign.ws.bean.object.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * The type Certificate formatting.
  */
 public class CertificateFormatting {
-
-    /** The log. */
-    private static final Logger log = LoggerFactory.getLogger(CertificateFormatting.class);
 
     /**
      * Format certificate string.

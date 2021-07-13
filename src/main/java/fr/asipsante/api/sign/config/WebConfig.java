@@ -4,6 +4,8 @@
 
 package fr.asipsante.api.sign.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -11,11 +13,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import java.util.List;
-
 /**
  * The Class WebConfig.
  */
+@SuppressWarnings("deprecation")
 @Configuration
 @Import(SwaggerConfiguration.class)
 public class WebConfig extends WebMvcConfigurerAdapter {

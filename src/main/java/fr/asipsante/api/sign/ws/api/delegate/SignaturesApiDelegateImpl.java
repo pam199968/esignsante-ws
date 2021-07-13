@@ -29,6 +29,7 @@ import fr.asipsante.api.sign.ws.model.ESignSanteSignatureReport;
 import fr.asipsante.api.sign.ws.model.ESignSanteSignatureReportWithProof;
 import fr.asipsante.api.sign.ws.model.Erreur;
 import fr.asipsante.api.sign.ws.model.Metadata;
+import fr.asipsante.api.sign.ws.model.OpenidToken;
 import fr.asipsante.api.sign.ws.util.ESignatureType;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
@@ -178,10 +179,8 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 } else if (ESignatureType.PADES.equals(type)) { 
                     rapportSignature = signatureService.signPADESBaselineB(doc.getBytes(), signParams);
                     // Validation de la signature
-                    // TODO
-                    rapportVerifSignature = null;
-                    //rapportVerifSignature = signatureValidationService.validateXADESBaseLineBSignature(
-                    //        rapportSignature.getDocSigne(), signValidationParameters, serviceCaCrl.getCacrlWrapper());
+                    rapportVerifSignature = signatureValidationService.validatePADESBaseLineBSignature(
+                            rapportSignature.getDocSigneBytes(), signValidationParameters, serviceCaCrl.getCacrlWrapper());
                 } else {
                     rapportSignature = signatureService.signXMLDsig(doc.getBytes(), signParams);
                     // Validation de la signature
@@ -275,7 +274,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     @Override
     public ResponseEntity<ESignSanteSignatureReportWithProof> signatureXMLdsigWithProof(
             final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf, final String requestId,
-            final String proofTag, final String applicantId, final String secret, final List<String> signers) {
+            final String proofTag, final String applicantId, final String secret, final List<String> signers, final List<OpenidToken> openidTokens) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             // get version object for proof generation
@@ -285,6 +284,10 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag,
                 applicantId, calledOperation("/signatures/xmldsigwithproof"), wsVersion);
+        
+        // Remplissage de la liste des beans OpenId
+        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+        
         return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.XMLDSIG, signers);
     }
 
@@ -303,7 +306,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     @Override
     public ResponseEntity<ESignSanteSignatureReportWithProof> signatureXadesWithProof(
             final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf, final String requestId,
-            final String proofTag, final String applicantId, final String secret, List<String> signers) {
+            final String proofTag, final String applicantId, final String secret, List<String> signers, final List<OpenidToken> openidTokens) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             // get version object for proof generation
@@ -313,6 +316,10 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag,
                 applicantId, calledOperation("/signatures/xadesbaselinebwithproof"), wsVersion);
+        
+        // Remplissage de la liste des beans OpenId
+        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+      
         return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.XADES, signers);
     }
     
@@ -331,7 +338,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     @Override
     public ResponseEntity<ESignSanteSignatureReportWithProof> signaturePadesWithProof(
             final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf, final String requestId,
-            final String proofTag, final String applicantId, final String secret, List<String> signers) {
+            final String proofTag, final String applicantId, final String secret, List<String> signers, final List<OpenidToken> openidTokens) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             // get version object for proof generation
@@ -341,6 +348,10 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag,
                 applicantId, calledOperation("/signatures/padesbaselinebwithproof"), wsVersion);
+        
+        // Remplissage de la liste des beans OpenId
+        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+      
         return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.PADES, signers);
     }
 

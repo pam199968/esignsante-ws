@@ -118,7 +118,7 @@ public class ValidationApiIntegrationTest {
     }
     
     /**
-     * Cas passant validation PADES.
+     * Cas passant validation PADES avec preuve et openid tokens.
      *
      * @throws Exception the exception
      */
