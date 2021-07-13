@@ -5,7 +5,7 @@
 	<artifactId>esignsante-webservices</artifactId>
 	<packaging>jar</packaging>
 	<name>esignsante-webservices</name>
-	<version>2.5.0.0-RELEASE</version>
+	<version>2.5.0.0-SNAPSHOT</version>
 	<properties>
 		<java.version>1.8</java.version>
 		<asipsign.version>2.4.0.0-RELEASE</asipsign.version>
