@@ -174,12 +174,6 @@ paths:
             \ &nbsp;&nbsp;&nbsp;le document original non signé.<br>"
          requestBody:
             content:
-               application/json:
-                  schema:               
-                     type: array
-                     items:
-                        type: object
-                        $ref: '#/components/schemas/OpenidToken'
                multipart/form-data:
                   schema:
                      $ref: '#/components/schemas/SignDocumentWithProof'
@@ -257,12 +251,6 @@ paths:
             \ &nbsp;&nbsp;&nbsp;le document original non signé.<br>"
          requestBody:
             content:
-               application/json:
-                  schema:               
-                     type: array
-                     items:
-                        type: object
-                        $ref: '#/components/schemas/OpenidToken'
                multipart/form-data:
                   schema:
                      $ref: '#/components/schemas/SignDocumentWithProof'
@@ -340,12 +328,6 @@ paths:
             \ &nbsp;&nbsp;&nbsp;le document original non signé.<br>"
          requestBody:
             content:
-               application/json:
-                  schema:               
-                     type: array
-                     items:
-                        type: object
-                        $ref: '#/components/schemas/OpenidToken'
                multipart/form-data:
                   schema:
                      $ref: '#/components/schemas/SignDocumentWithProof'
@@ -812,6 +794,12 @@ components:
                description: Identifiant du demandeur utilisé pour renseigner le champ applicantId de la preuve.
                type: string
                pattern: ^[a-zA-Z_0-9\-]*$
+            openidTokens:
+               description: Liste de tokens openid mappés à leurs endpoints (tokenIntrospectionEndpoint et userInfoEndpoint).
+               type: array
+               items:
+                  type: object
+                  $ref: '#/components/schemas/OpenidToken'
       VerifCertDocument:
          type: object
          required:

@@ -201,7 +201,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 
                     final ESignSanteSignatureReportWithProof rapport = populateResultSignWithProof(
                             rapportVerifSignature.getListeErreurSignature(), rapportVerifSignature.getMetaData(),
-                            rapportVerifSignature.isValide(), rapportSignature.getDocSigne(),
+                            rapportVerifSignature.isValide(), rapportSignature.getDocSigneBytes(),
                             rapportSignaturePreuve.getDocSigne());
                     re = new ResponseEntity<>(rapport, HttpStatus.OK);
                 }
@@ -510,10 +510,10 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
      */
     private ESignSanteSignatureReportWithProof populateResultSignWithProof(
             final List<ErreurSignature> erreursSignature, final List<MetaDatum> metadata, final boolean isValide,
-            final String signedDocument, final String preuve) {
+            final byte[] signedDocument, final String preuve) {
         final ESignSanteSignatureReportWithProof rapport = new ESignSanteSignatureReportWithProof();
         rapport.setValide(isValide);
-        rapport.setDocSigne(Base64.getEncoder().encodeToString(signedDocument.getBytes()));
+        rapport.setDocSigne(Base64.getEncoder().encodeToString(signedDocument));
         rapport.setPreuve(Base64.getEncoder().encodeToString(preuve.getBytes()));
 
         final List<Erreur> erreurs = new ArrayList<>();
