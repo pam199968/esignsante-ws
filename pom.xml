@@ -121,7 +121,7 @@
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<version>4.2.0</version>
+				<version>5.2.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -129,7 +129,7 @@
 						</goals>
 						<configuration>
 							<inputSpec>${project.basedir}/src/main/resources/esignsante-ws.yaml</inputSpec>
-							<language>spring</language>
+							<generatorName>spring</generatorName>
 							<library>spring-boot</library>
 							<ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>
 							<configOptions>
@@ -143,6 +143,7 @@
 								<useBeanValidation>true</useBeanValidation>
 								<skipOverwrite>true</skipOverwrite>
 								<disableHtmlEscaping>true</disableHtmlEscaping>
+								<implicitHeaders>true</implicitHeaders>
 							</configOptions>
 							<withXml>true</withXml>
 						</configuration>

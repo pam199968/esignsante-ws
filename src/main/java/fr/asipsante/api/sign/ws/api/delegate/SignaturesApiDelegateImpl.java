@@ -4,6 +4,25 @@
 
 package fr.asipsante.api.sign.ws.api.delegate;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.multipart.MultipartFile;
+
 import fr.asipsante.api.sign.bean.errors.ErreurSignature;
 import fr.asipsante.api.sign.bean.metadata.MetaDatum;
 import fr.asipsante.api.sign.bean.parameters.ProofParameters;
@@ -29,28 +48,9 @@ import fr.asipsante.api.sign.ws.model.ESignSanteSignatureReport;
 import fr.asipsante.api.sign.ws.model.ESignSanteSignatureReportWithProof;
 import fr.asipsante.api.sign.ws.model.Erreur;
 import fr.asipsante.api.sign.ws.model.Metadata;
-import fr.asipsante.api.sign.ws.model.OpenidToken;
 import fr.asipsante.api.sign.ws.util.ESignatureType;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.info.BuildProperties;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * The Class SignaturesApiDelegateImpl.
@@ -274,7 +274,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     @Override
     public ResponseEntity<ESignSanteSignatureReportWithProof> signatureXMLdsigWithProof(
             final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf, final String requestId,
-            final String proofTag, final String applicantId, final String secret, final List<String> signers, final List<OpenidToken> openidTokens) {
+            final String proofTag, final String applicantId, final String secret, final List<String> signers) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             // get version object for proof generation
@@ -286,7 +286,8 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 applicantId, calledOperation("/signatures/xmldsigwithproof"), wsVersion);
         
         // Remplissage de la liste des beans OpenId
-        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+
+        proofParameters.setOpenidTokens(SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader()));
         
         return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.XMLDSIG, signers);
     }
@@ -306,7 +307,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     @Override
     public ResponseEntity<ESignSanteSignatureReportWithProof> signatureXadesWithProof(
             final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf, final String requestId,
-            final String proofTag, final String applicantId, final String secret, List<String> signers, final List<OpenidToken> openidTokens) {
+            final String proofTag, final String applicantId, final String secret, List<String> signers) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             // get version object for proof generation
@@ -318,7 +319,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 applicantId, calledOperation("/signatures/xadesbaselinebwithproof"), wsVersion);
         
         // Remplissage de la liste des beans OpenId
-        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+        proofParameters.setOpenidTokens(SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader()));
       
         return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.XADES, signers);
     }
@@ -338,7 +339,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
     @Override
     public ResponseEntity<ESignSanteSignatureReportWithProof> signaturePadesWithProof(
             final Long idSignConf, final MultipartFile doc, final Long idVerifSignConf, final String requestId,
-            final String proofTag, final String applicantId, final String secret, List<String> signers, final List<OpenidToken> openidTokens) {
+            final String proofTag, final String applicantId, final String secret, List<String> signers) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             // get version object for proof generation
@@ -350,7 +351,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 applicantId, calledOperation("/signatures/padesbaselinebwithproof"), wsVersion);
         
         // Remplissage de la liste des beans OpenId
-        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+        proofParameters.setOpenidTokens(SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader()));
       
         return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.PADES, signers);
     }

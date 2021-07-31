@@ -145,9 +145,10 @@ public class ValidationApiIntegrationTest {
 		String requestJson = ow.writeValueAsString(tokens);
 
 		final MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf).content(requestJson)
+				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf)
 				.param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
-				.param("applicantId", "RPPS").param("idProofConf", "1").accept("application/json"))
+				.param("applicantId", "RPPS").param("idProofConf", "1").accept("application/json")
+				.header("OpenidToken", requestJson))
 				.andExpect(status().isOk()).andDo(print()).andReturn();
 
 		final JSONObject body = new JSONObject(result.getResponse().getContentAsString());

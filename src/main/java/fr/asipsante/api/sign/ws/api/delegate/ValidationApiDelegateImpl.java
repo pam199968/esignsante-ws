@@ -54,7 +54,6 @@ import fr.asipsante.api.sign.ws.model.ESignSanteValidationReport;
 import fr.asipsante.api.sign.ws.model.ESignSanteValidationReportWithProof;
 import fr.asipsante.api.sign.ws.model.Erreur;
 import fr.asipsante.api.sign.ws.model.Metadata;
-import fr.asipsante.api.sign.ws.model.OpenidToken;
 import fr.asipsante.api.sign.ws.util.ESignatureType;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
@@ -205,7 +204,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
     }
 
     /**
-     * Verif signature XM ldsig with proof.
+     * Verif signature XMldsig with proof.
      *
      * @param idVerifSignConf the id verif sign conf
      * @param doc             the doc
@@ -218,7 +217,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
     @Override
     public ResponseEntity<ESignSanteValidationReportWithProof> verifSignatureXMLdsigWithProof(
             final Long idVerifSignConf, final MultipartFile doc, final String requestId, final String proofTag,
-            final String applicantId, final Long idProofConf, final List<OpenidToken> openidTokens) {
+            final String applicantId, final Long idProofConf) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             wsVersion = new Version(buildProperties.getVersion());
@@ -229,7 +228,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
                 calledOperation("/validation/signatures/xmldsigwithproof"), wsVersion);
         
         // Remplissage de la liste des beans OpenId
-        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+        proofParameters.setOpenidTokens(SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader()));
         
         return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XMLDSIG);
     }
@@ -248,7 +247,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
     @Override
     public ResponseEntity<ESignSanteValidationReportWithProof> verifSignatureXadesWithProof(
             final Long idVerifSignConf, final MultipartFile doc, final String requestId, final String proofTag,
-            final String applicantId, final Long idProofConf, final List<OpenidToken> openidTokens) {
+            final String applicantId, final Long idProofConf) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             wsVersion = new Version(buildProperties.getVersion());
@@ -259,7 +258,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
                 calledOperation("/validation/signatures/xadesbaselinebwithproof"), wsVersion);
         
         // Remplissage de la liste des beans OpenId
-        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+        proofParameters.setOpenidTokens(SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader()));
         
         return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XADES);
     }
@@ -278,7 +277,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
     @Override
     public ResponseEntity<ESignSanteValidationReportWithProof> verifSignaturePadesWithProof(
             final Long idVerifSignConf, final MultipartFile doc, final String requestId, final String proofTag,
-            final String applicantId, final Long idProofConf, final List<OpenidToken> openidTokens) {
+            final String applicantId, final Long idProofConf) {
         Version wsVersion = DEFAULT_VERSION;
         try {
             wsVersion = new Version(buildProperties.getVersion());
@@ -289,7 +288,7 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
                 calledOperation("/validation/signatures/padesbaselinebwithproof"), wsVersion);
         
         // Remplissage de la liste des beans OpenId
-        proofParameters.setOpenidTokens(SignWsUtils.getOpenIdBeans(openidTokens));
+        proofParameters.setOpenidTokens(SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader()));
    
         return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.PADES);
     }

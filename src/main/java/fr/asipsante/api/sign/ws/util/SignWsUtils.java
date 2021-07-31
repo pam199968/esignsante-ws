@@ -136,7 +136,7 @@ public class SignWsUtils {
         return status;
     }
     
-    public static List<OpenIdTokenBean> getOpenIdBeans(final List<OpenidToken> openidTokens) {
+    public static List<OpenIdTokenBean> convertOpenIdTokens(final List<OpenidToken> openidTokens) {
         List<OpenIdTokenBean> listTokenBeans = new ArrayList<OpenIdTokenBean>();
         if (openidTokens != null) {
 	        for(OpenidToken token: openidTokens) {
