@@ -28,6 +28,7 @@ import fr.asipsante.api.sign.bean.metadata.MetaDatum;
 import fr.asipsante.api.sign.bean.parameters.ProofParameters;
 import fr.asipsante.api.sign.bean.parameters.SignatureParameters;
 import fr.asipsante.api.sign.bean.parameters.SignatureValidationParameters;
+import fr.asipsante.api.sign.bean.proof.OpenIdTokenBean;
 import fr.asipsante.api.sign.bean.rapports.RapportSignature;
 import fr.asipsante.api.sign.bean.rapports.RapportValidationSignature;
 import fr.asipsante.api.sign.enums.MetaDataType;
@@ -286,8 +287,11 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 applicantId, calledOperation("/signatures/xmldsigwithproof"), wsVersion);
         
         // Remplissage de la liste des beans OpenId
-
-        proofParameters.setOpenidTokens(SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader()));
+        List<OpenIdTokenBean> tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
+        
+        if (!tokens.isEmpty()) {
+			proofParameters.setOpenidTokens(tokens);
+		}
         
         return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.XMLDSIG, signers);
     }
@@ -319,8 +323,11 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 applicantId, calledOperation("/signatures/xadesbaselinebwithproof"), wsVersion);
         
         // Remplissage de la liste des beans OpenId
-        proofParameters.setOpenidTokens(SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader()));
-      
+        List<OpenIdTokenBean> tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
+        
+        if (!tokens.isEmpty()) {
+			proofParameters.setOpenidTokens(tokens);
+		}      
         return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.XADES, signers);
     }
     
@@ -351,8 +358,11 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
                 applicantId, calledOperation("/signatures/padesbaselinebwithproof"), wsVersion);
         
         // Remplissage de la liste des beans OpenId
-        proofParameters.setOpenidTokens(SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader()));
-      
+        List<OpenIdTokenBean> tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
+        
+        if (!tokens.isEmpty()) {
+			proofParameters.setOpenidTokens(tokens);
+		}      
         return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters, ESignatureType.PADES, signers);
     }
 

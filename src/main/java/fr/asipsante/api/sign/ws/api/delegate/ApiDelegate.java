@@ -64,7 +64,7 @@ public class ApiDelegate {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Optional<String[]> arrayValues = getRequest().map(r -> r.getHeaderValues("OpenidToken"));
 		List<OpenidToken> openidTokens = new ArrayList<OpenidToken>();
-		if (null != arrayValues) {
+		if (arrayValues.isPresent()) {
 
 			for (String json : arrayValues.get()) {
 				try {

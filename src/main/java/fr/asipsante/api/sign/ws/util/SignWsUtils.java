@@ -138,7 +138,7 @@ public class SignWsUtils {
     
     public static List<OpenIdTokenBean> convertOpenIdTokens(final List<OpenidToken> openidTokens) {
         List<OpenIdTokenBean> listTokenBeans = new ArrayList<OpenIdTokenBean>();
-        if (openidTokens != null) {
+        if (!openidTokens.isEmpty()) {
 	        for(OpenidToken token: openidTokens) {
 	        	OpenIdTokenBean tokenBean = new OpenIdTokenBean();
 	        	tokenBean.setTokenValue(token.getTokenValue());

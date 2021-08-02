@@ -148,7 +148,7 @@ public class ValidationApiIntegrationTest {
 				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf)
 				.param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
 				.param("applicantId", "RPPS").param("idProofConf", "1").accept("application/json")
-				.header("OpenidToken", requestJson))
+				.header("OpenidToken","[ {\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"} ]\""))
 				.andExpect(status().isOk()).andDo(print()).andReturn();
 
 		final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
