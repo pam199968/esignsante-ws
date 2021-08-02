@@ -134,16 +134,6 @@ public class ValidationApiIntegrationTest {
 	 */
 	@Test
 	public void verifSignPadesBaselineBTest() throws Exception {
-		ObjectMapper mapper = new ObjectMapper();
-		OpenidToken[] tokens = new OpenidToken[1];
-		tokens[0] = new OpenidToken();
-		tokens[0].setTokenValue("xxxTokenValuexxx");
-		tokens[0].setTokenIntrospectionEndpoint("xxxIntrospecxxx");
-		tokens[0].setUserInfoEndpoint("xxxuserInfoxxx");
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-		String requestJson = ow.writeValueAsString(tokens);
-
 		final MvcResult result = mockMvc.perform(MockMvcRequestBuilders
 				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf)
 				.param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
