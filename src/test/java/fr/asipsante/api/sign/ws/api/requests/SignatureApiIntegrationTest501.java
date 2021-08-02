@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -42,6 +43,7 @@ import java.util.Objects;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ComponentScan("fr.asipsante.api.sign.ws.api")
+@TestPropertySource(properties = { "config.secret=disable" })
 public class SignatureApiIntegrationTest501 {
 
     /** The mock mvc. */
