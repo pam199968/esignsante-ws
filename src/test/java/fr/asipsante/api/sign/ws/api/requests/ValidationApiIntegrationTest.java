@@ -135,14 +135,31 @@ public class ValidationApiIntegrationTest {
 	@Test
 	public void verifSignPadesBaselineBTest() throws Exception {
 		final MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf)
-				.param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
-				.param("applicantId", "RPPS").param("idProofConf", "1").accept("application/json")
-				.header("OpenidToken","[ {\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"} ]\""))
+				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf).param("idVerifSignConf", "1")
+				.param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
+				.param("idProofConf", "1").accept("application/json")
+				.header("OpenidToken",
+						"{\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"}")
+				.header("OpenidToken",
+						"{\"tokenValue\":\"xxxTokenValue2xxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospec2xxx\",\"userInfoEndpoint\":\"xxxuserInfo2xxx\"}"))
 				.andExpect(status().isOk()).andDo(print()).andReturn();
 
 		final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
 		assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 4, body.names().length());
+	}
+
+	/**
+	 * Cas non passant validation PADES avec preuve et openid tokens non conformes.
+	 *
+	 * @throws Exception the exception
+	 */
+	@Test
+	public void verifSignPadesBaselineBTestWrongTokens() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf)
+				.param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
+				.param("applicantId", "RPPS").param("idProofConf", "1").accept("application/json").header("OpenidToken",
+						"[{\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"}]"))
+				.andExpect(status().isNotImplemented()).andDo(print()).andReturn();
 	}
 
 	/**

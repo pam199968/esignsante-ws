@@ -18,6 +18,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.asipsante.api.sign.utils.AsipSignClientException;
 import fr.asipsante.api.sign.ws.model.OpenidToken;
 
 /**
@@ -59,8 +60,9 @@ public class ApiDelegate {
 	 * Gets the OpenidToken header.
 	 *
 	 * @return the OpenidToken header
+	 * @throws AsipSignClientException 
 	 */
-	public List<OpenidToken> getOpenIdTokenHeader() {
+	public List<OpenidToken> getOpenIdTokenHeader() throws AsipSignClientException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Optional<String[]> arrayValues = getRequest().map(r -> r.getHeaderValues("OpenidToken"));
 		List<OpenidToken> openidTokens = new ArrayList<OpenidToken>();
@@ -72,6 +74,7 @@ public class ApiDelegate {
 					openidTokens.add(oid);
 				} catch (JsonProcessingException e) {
 					log.error("Error lors du mapping du token", e);
+					throw new AsipSignClientException("Tokens Openid non conformes.");
 				}
 			}
 		}

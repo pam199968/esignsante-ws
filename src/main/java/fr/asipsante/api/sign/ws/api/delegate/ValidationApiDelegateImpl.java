@@ -228,14 +228,19 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag, applicantId,
                 calledOperation("/validation/signatures/xmldsigwithproof"), wsVersion);
-        
-        // Remplissage de la liste des beans OpenId
-        List<OpenIdTokenBean> tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
-        
-        if (!tokens.isEmpty()) {
-			proofParameters.setOpenidTokens(tokens);
+  
+		try {
+			// Remplissage de la liste des beans OpenId
+	        List<OpenIdTokenBean> tokens = null;
+			tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
+	        if (!tokens.isEmpty()) {
+				proofParameters.setOpenidTokens(tokens);
+			}
+			return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XMLDSIG);
+		} catch (AsipSignClientException e) {
+			log.error(ExceptionUtils.getStackTrace(e));
+			return new ResponseEntity<>(SignWsUtils.asipHttpError(e));
 		}
-		return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XMLDSIG);
     }
 
     /**
@@ -261,14 +266,19 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
         }
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag, applicantId,
                 calledOperation("/validation/signatures/xadesbaselinebwithproof"), wsVersion);
-        
-        // Remplissage de la liste des beans OpenId
-        List<OpenIdTokenBean> tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
-        
-        if (!tokens.isEmpty()) {
-			proofParameters.setOpenidTokens(tokens);
-		}        
-        return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XADES);
+
+		try { 
+	        // Remplissage de la liste des beans OpenId
+	        List<OpenIdTokenBean> tokens = null;
+			tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
+	        if (!tokens.isEmpty()) {
+				proofParameters.setOpenidTokens(tokens);
+			}        
+	        return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.XADES);
+		} catch (AsipSignClientException e) {
+			log.error(ExceptionUtils.getStackTrace(e));
+			return new ResponseEntity<>(SignWsUtils.asipHttpError(e));
+		}
     }
     
     /**
@@ -295,13 +305,18 @@ public class ValidationApiDelegateImpl extends ApiDelegate implements Validation
         final ProofParameters proofParameters = new ProofParameters("Sign", requestId, proofTag, applicantId,
                 calledOperation("/validation/signatures/padesbaselinebwithproof"), wsVersion);
         
-        // Remplissage de la liste des beans OpenId
-        List<OpenIdTokenBean> tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
-        
-        if (!tokens.isEmpty()) {
-			proofParameters.setOpenidTokens(tokens);
-		}   
-        return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.PADES);
+		try {
+			// Remplissage de la liste des beans OpenId  
+			List<OpenIdTokenBean> tokens;
+			tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
+	        if (!tokens.isEmpty()) {
+				proofParameters.setOpenidTokens(tokens);
+			}   
+	        return validateDigitalSignatureWithProof(idVerifSignConf, doc, proofParameters, idProofConf, ESignatureType.PADES);
+		} catch (AsipSignClientException e) {
+			log.error(ExceptionUtils.getStackTrace(e));
+			return new ResponseEntity<>(SignWsUtils.asipHttpError(e));
+		}
     }
 
     /**
