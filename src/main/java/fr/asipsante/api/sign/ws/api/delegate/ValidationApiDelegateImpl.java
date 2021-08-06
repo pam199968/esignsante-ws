@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -59,11 +60,13 @@ import fr.asipsante.api.sign.ws.model.OpenidToken;
 import fr.asipsante.api.sign.ws.util.ESignatureType;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
+import io.swagger.annotations.Api;
 
 /**
  * The Class ValidationApiDelegateImpl.
  */
 @Service
+@Api(value = "Validation API Controller", produces = MediaType.APPLICATION_JSON_VALUE, tags = {"validation-api-controller"}) 
 public class ValidationApiDelegateImpl extends ApiDelegate implements ValidationApiDelegate {
 
     /** Default ESignSante major version. */

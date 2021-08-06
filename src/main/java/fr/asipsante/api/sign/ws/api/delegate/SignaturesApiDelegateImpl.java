@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -52,11 +53,13 @@ import fr.asipsante.api.sign.ws.model.Metadata;
 import fr.asipsante.api.sign.ws.util.ESignatureType;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
+import io.swagger.annotations.Api;
 
 /**
  * The Class SignaturesApiDelegateImpl.
  */
 @Service
+@Api(value = "Signatures API Controller", produces = MediaType.APPLICATION_JSON_VALUE, tags = {"signatures-api-controller"}) 
 public class SignaturesApiDelegateImpl extends ApiDelegate implements SignaturesApiDelegate {
 
 	/** Default ESignSante major version. */

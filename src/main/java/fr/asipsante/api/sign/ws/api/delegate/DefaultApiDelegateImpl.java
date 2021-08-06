@@ -6,9 +6,12 @@ package fr.asipsante.api.sign.ws.api.delegate;
 
 import fr.asipsante.api.sign.ws.api.DefaultApiDelegate;
 import fr.asipsante.api.sign.ws.util.WsVars;
+import io.swagger.annotations.Api;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import java.util.Optional;
  * The Class DefaultApiDelegateImpl.
  */
 @Service
+@Api(value = "Default API Controller", produces = MediaType.APPLICATION_JSON_VALUE, tags = {"default-api-controller"}) 
 public class DefaultApiDelegateImpl extends ApiDelegate implements DefaultApiDelegate {
 
     /**
