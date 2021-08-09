@@ -4,30 +4,27 @@
 
 package fr.asipsante.api.sign.ws.api.delegate;
 
-import fr.asipsante.api.sign.ws.api.ConfigurationsApiDelegate;
-import fr.asipsante.api.sign.ws.bean.config.IGlobalConf;
-import fr.asipsante.api.sign.ws.model.Conf;
-import fr.asipsante.api.sign.ws.util.WsVars;
-import io.swagger.annotations.Api;
+import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.util.Optional;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.security.cert.CertificateException;
-import java.util.Optional;
+import fr.asipsante.api.sign.ws.api.ConfigurationsApiDelegate;
+import fr.asipsante.api.sign.ws.bean.config.IGlobalConf;
+import fr.asipsante.api.sign.ws.model.Conf;
+import fr.asipsante.api.sign.ws.util.WsVars;
 
 /**
  * The Class ConfigurationsApiDelegateImpl.
  */
 @Service
-@Api(value = "Configurations API Controller", produces = MediaType.APPLICATION_JSON_VALUE, tags = {"configurations-api-controller"}) 
 public class ConfigurationsApiDelegateImpl extends ApiDelegate implements ConfigurationsApiDelegate {
 
     /**

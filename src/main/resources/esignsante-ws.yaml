@@ -11,7 +11,7 @@ servers:
         default: /
 info:
   description: API du composant eSignSante. <br>Ce composant dit de "signature" mutualise et homogénéise la mise en oeuvre des besoins autour de la signature. <br>Il permet de signer des documents ainsi que de vérifier la validité d'une signature ou d'un certificat.    <br>
-  version: 2.5.0.6
+  version: 2.5.0.7
   title: eSignSante
   contact:
     email: esignsante@asipsante.fr
@@ -54,6 +54,7 @@ paths:
         '500':
           description: Erreur interne du serveur.
       tags:
+        - default-api-controller
         - client
   /secrets:
     post:
@@ -75,6 +76,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/HashedSecret'
       tags:
+        - secrets-api-controller
         - client
   /configurations:
     get:
@@ -93,6 +95,7 @@ paths:
         '500':
           description: Erreur interne du serveur.
       tags:
+        - configurations-api-controller
         - configurations
   /ca:
     get:
@@ -148,6 +151,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - signatures-api-controller
         - xmldsig
   /signatures/xmldsigwithproof:
     post:
@@ -180,6 +184,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - signatures-api-controller
         - xmldsig
   /signatures/xadesbaselineb:
     post:
@@ -221,6 +226,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - signatures-api-controller
         - xades
   /signatures/xadesbaselinebwithproof:
     post:
@@ -255,6 +261,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/OpenidToken'
       tags:
+        - signatures-api-controller
         - xades
   /signatures/padesbaselineb:
     post:
@@ -288,6 +295,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - signatures-api-controller
         - pades
   /signatures/padesbaselinebwithproof:
     post:
@@ -334,6 +342,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/OpenidToken'
       tags:
+        - signatures-api-controller
         - pades
   /validation/signatures/xmldsig:
     post:
@@ -364,6 +373,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - validation-api-controller
         - xmldsig
   /validation/signatures/xmldsigwithproof:
     post:
@@ -394,6 +404,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - validation-api-controller
         - xmldsig
   /validation/signatures/xadesbaselineb:
     post:
@@ -424,6 +435,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - validation-api-controller
         - xades
   /validation/signatures/xadesbaselinebwithproof:
     post:
@@ -454,6 +466,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - validation-api-controller
         - xades
   /validation/signatures/padesbaselineb:
     post:
@@ -484,6 +497,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - validation-api-controller
         - pades
   /validation/signatures/padesbaselinebwithproof:
     post:
@@ -514,6 +528,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - validation-api-controller
         - pades
   /validation/certificats:
     post:
@@ -544,6 +559,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - validation-api-controller
         - certificats
   /validation/certificatswithproof:
     post:
@@ -574,6 +590,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       tags:
+        - validation-api-controller
         - certificats
 components:
   schemas:
