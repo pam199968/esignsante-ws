@@ -114,6 +114,7 @@ paths:
         '500':
           description: Erreur interne du serveur.
       tags:
+        - ca-api-controller
         - ca
   /signatures/xmldsig:
     post:
@@ -332,7 +333,6 @@ paths:
           description: Le service n'est pas disponible.
       parameters:
         - $ref: '#/components/parameters/OpenidToken'
-          explode: true
       tags:
         - pades
   /validation/signatures/xmldsig:
