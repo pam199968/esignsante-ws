@@ -59,7 +59,7 @@ import io.swagger.annotations.Api;
  * The Class SignaturesApiDelegateImpl.
  */
 @Service
-@Api(value = "Signatures API Controller", produces = MediaType.APPLICATION_JSON_VALUE, tags = {"signatures-api-controller"}) 
+@Api(hidden=true)
 public class SignaturesApiDelegateImpl extends ApiDelegate implements SignaturesApiDelegate {
 
 	/** Default ESignSante major version. */
