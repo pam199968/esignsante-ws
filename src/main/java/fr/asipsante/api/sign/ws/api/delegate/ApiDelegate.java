@@ -29,7 +29,7 @@ public class ApiDelegate {
 	/**
 	 * The log.
 	 */
-	Logger log = LoggerFactory.getLogger(ApiDelegate.class);
+	Logger logger = LoggerFactory.getLogger(ApiDelegate.class);
 
 	/**
 	 * Gets the request.
@@ -73,7 +73,7 @@ public class ApiDelegate {
 					OpenidToken oid = objectMapper.readValue(json, OpenidToken.class);
 					openidTokens.add(oid);
 				} catch (JsonProcessingException e) {
-					log.error("Error lors du mapping du token", e);
+					logger.error("Error lors du mapping du token", e);
 					throw new AsipSignClientException("Tokens Openid non conformes.");
 				}
 			}

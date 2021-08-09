@@ -4,18 +4,6 @@
 
 package fr.asipsante.api.sign.config.provider.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.asipsante.api.sign.config.provider.IeSignSanteConfigurationsProvider;
-import fr.asipsante.api.sign.ws.bean.config.IGlobalConf;
-import fr.asipsante.api.sign.ws.bean.config.impl.GlobalConfJson;
-import fr.asipsante.api.sign.ws.bean.object.*;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,6 +13,25 @@ import java.security.InvalidParameterException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fr.asipsante.api.sign.config.provider.IeSignSanteConfigurationsProvider;
+import fr.asipsante.api.sign.ws.bean.config.IGlobalConf;
+import fr.asipsante.api.sign.ws.bean.config.impl.GlobalConfJson;
+import fr.asipsante.api.sign.ws.bean.object.CaConf;
+import fr.asipsante.api.sign.ws.bean.object.CertVerifConf;
+import fr.asipsante.api.sign.ws.bean.object.ProofConf;
+import fr.asipsante.api.sign.ws.bean.object.SignVerifConf;
+import fr.asipsante.api.sign.ws.bean.object.SignatureConf;
 
 /**
  * The Class ESignSanteSanteConfigurationsJson.
@@ -219,20 +226,25 @@ public class ESignSanteSanteConfigurationsJson implements IeSignSanteConfigurati
          *
          * @param file file
          * @param digest digest
+         * @throws IOException 
          */
         private String getFileChecksum(MessageDigest digest, File file) throws IOException
         {
             //Get file input stream for reading the file content
-            FileInputStream fis = new FileInputStream(file);
-            //Create byte array to read data in chunks
-            byte[] byteArray = new byte[1024];
-            int bytesCount;
-            //Read file data and update in message digest
-            while ((bytesCount = fis.read(byteArray)) != -1) {
-                digest.update(byteArray, 0, bytesCount);
-            }
-            //close the stream; We don't need it anymore.
-            fis.close();
+            ;
+			try (FileInputStream fis = new FileInputStream(file)){
+				//Create byte array to read data in chunks
+	            byte[] byteArray = new byte[1024];
+	            int bytesCount;
+	            //Read file data and update in message digest
+	            while ((bytesCount = fis.read(byteArray)) != -1) {
+	                digest.update(byteArray, 0, bytesCount);
+	            }
+			} catch (IOException e) {
+				log.error("stream creation failed while getting the file checksum");
+				throw new IOException(e);
+			}
+            
             //Get the hash's bytes
             byte[] bytes = digest.digest();
             //This bytes[] has bytes in decimal format; Convert it to hexadecimal format

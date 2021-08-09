@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -36,9 +37,9 @@ public class InternalErrorController extends BasicErrorController {
      * Traitement des erreurs inatendues en masquant la cause.
      *
      * @param request : la requête à traiter.
-     * @return une errur 500 sans message.
+     * @return une erreur 500 sans message.
      */
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> errorJson(final HttpServletRequest request) {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
