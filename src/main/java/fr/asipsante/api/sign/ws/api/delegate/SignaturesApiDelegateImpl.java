@@ -52,13 +52,11 @@ import fr.asipsante.api.sign.ws.model.Metadata;
 import fr.asipsante.api.sign.ws.util.ESignatureType;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
-import io.swagger.annotations.Api;
 
 /**
  * The Class SignaturesApiDelegateImpl.
  */
 @Service
-@Api(tags={"signatures"})
 public class SignaturesApiDelegateImpl extends ApiDelegate implements SignaturesApiDelegate {
 
 	/** Default ESignSante major version. */
