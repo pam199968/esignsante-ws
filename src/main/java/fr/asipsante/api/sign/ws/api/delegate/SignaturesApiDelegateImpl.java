@@ -54,12 +54,13 @@ import fr.asipsante.api.sign.ws.util.ESignatureType;
 import fr.asipsante.api.sign.ws.util.SignWsUtils;
 import fr.asipsante.api.sign.ws.util.WsVars;
 import io.swagger.annotations.Api;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * The Class SignaturesApiDelegateImpl.
  */
 @Service
-@Api(hidden=true)
+@ApiIgnore
 public class SignaturesApiDelegateImpl extends ApiDelegate implements SignaturesApiDelegate {
 
 	/** Default ESignSante major version. */
