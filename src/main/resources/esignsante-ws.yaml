@@ -11,7 +11,7 @@ servers:
         default: /
 info:
   description: API du composant eSignSante. <br>Ce composant dit de "signature" mutualise et homogénéise la mise en oeuvre des besoins autour de la signature. <br>Il permet de signer des documents ainsi que de vérifier la validité d'une signature ou d'un certificat.    <br>
-  version: 2.5.0.7
+  version: 2.5.0.0
   title: eSignSante
   contact:
     email: esignsante@asipsante.fr
@@ -259,7 +259,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       parameters:
-        - $ref: '#/components/parameters/OpenidToken'
+        - $ref: '#/components/parameters/OpenidTokens'
       tags:
         - signatures-api-controller
         - xades
@@ -340,7 +340,7 @@ paths:
         '503':
           description: Le service n'est pas disponible.
       parameters:
-        - $ref: '#/components/parameters/OpenidToken'
+        - $ref: '#/components/parameters/OpenidTokens'
       tags:
         - signatures-api-controller
         - pades
@@ -1025,22 +1025,24 @@ components:
           type: string
         message:
           type: string
-  parameters:
     OpenidToken:
-      name: OpenidToken
+      description: contient les informations du token et sa validation
+      required:
+        - accessToken
+        - introspectionResponse
+        - userInfo
+      properties:
+        accessToken:
+          type: string
+        introspectionResponse:
+          type: string
+        userInfo:
+          type: string
+  parameters:
+    OpenidTokens:
+      name: OpenidTokens
       in: header
       schema:
         type: array
         items:
-          type: object
-          required:
-            - tokenValue
-            - tokenIntrospectionEndpoint
-            - userInfoEndpoint
-          properties:
-            tokenValue:
-              type: string
-            tokenIntrospectionEndpoint:
-              type: string
-            userInfoEndpoint:
-              type: string
+          $ref: '#/components/schemas/OpenidToken'
