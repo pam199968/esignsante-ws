@@ -141,9 +141,9 @@ public class SignWsUtils {
         if (!openidTokens.isEmpty()) {
 	        for(OpenidToken token: openidTokens) {
 	        	OpenIdTokenBean tokenBean = new OpenIdTokenBean();
-	        	tokenBean.setTokenValue(token.getAccessToken());
-	        	tokenBean.setTokenIntrospectionEndpoint(token.getIntrospectionResponse());
-	        	tokenBean.setUserInfoEndpoint(token.getUserInfo());
+	        	tokenBean.setAccessToken(token.getAccessToken());
+	        	tokenBean.setIntrospectionResponse(token.getIntrospectionResponse());
+	        	tokenBean.setUserInfo(token.getUserInfo());
 	        	listTokenBeans.add(tokenBean);
 	        }
         }
