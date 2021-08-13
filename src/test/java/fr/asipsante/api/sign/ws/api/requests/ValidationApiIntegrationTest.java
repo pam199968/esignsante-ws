@@ -139,9 +139,9 @@ public class ValidationApiIntegrationTest {
 				.param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
 				.param("idProofConf", "1").accept("application/json")
 				.header("OpenidToken",
-						"{\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"}")
+						"{\"accessToken\":\"xxxTokenValuexxx\",\"introspectionResponse\":\"xxxIntrospecxxx\",\"userInfo\":\"xxxuserInfoxxx\"}")
 				.header("OpenidToken",
-						"{\"tokenValue\":\"xxxTokenValue2xxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospec2xxx\",\"userInfoEndpoint\":\"xxxuserInfo2xxx\"}"))
+						"{\"accessToken\":\"xxxTokenValue2xxx\",\"introspectionResponse\":\"xxxIntrospec2xxx\",\"userInfo\":\"xxxuserInfo2xxx\"}"))
 				.andExpect(status().isOk()).andDo(print()).andReturn();
 
 		final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
