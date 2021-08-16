@@ -129,7 +129,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/SignDocument'
+              $ref: '#/components/schemas/SignDocumentDSig'
         required: true
       responses:
         '200':
@@ -162,7 +162,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/SignDocumentWithProof'
+              $ref: '#/components/schemas/SignDocumentDSigWithProof'
         required: true
       responses:
         '200':
@@ -653,6 +653,24 @@ components:
           example: curl -X POST [...] -F "signers=Dupont" -F "signers=Dupond"
           items:
             type: string
+    SignDocumentDSig:
+      type: object
+      required:
+        - idSignConf
+        - file
+      properties:
+        secret:
+          description: Secret
+          type: string
+          pattern: '^[a-zA-Z_0-9\-]*$'
+        idSignConf:
+          description: Identifiant de configuration à sélectionner parmi la liste des configurations disponibles pour la signature (appel de l'opération "/configurations").
+          type: integer
+          format: int64
+        file:
+          description: Document à signer.
+          type: string
+          format: binary
     SignDocumentWithProof:
       type: object
       properties:
@@ -674,6 +692,44 @@ components:
           example: curl -X POST [...] -F "signers=Dupont" -F "signers=Dupond"
           items:
             type: string
+        idVerifSignConf:
+          description: Identifiant de configuration à sélectionner parmi la liste des configurations disponibles pour la vérification de signature (appel de l'opération "/configurations").
+          type: integer
+          format: int64
+        requestId:
+          description: Identifiant de la demande pour renseigner l'élément RequestId de la preuve.
+          type: string
+          pattern: '^[a-zA-Z_0-9\-]*$'
+        proofTag:
+          description: Tag utilisé pour renseigner l'élément Tag de la preuve.
+          type: string
+          pattern: '^[a-zA-Z_0-9\-]*$'
+        applicantId:
+          description: Identifiant du demandeur utilisé pour renseigner le champ applicantId de la preuve.
+          type: string
+          pattern: '^[a-zA-Z_0-9\-]*$'
+      required:
+        - idSignConf
+        - file
+        - idVerifSignConf
+        - requestId
+        - proofTag
+        - applicantId
+    SignDocumentDSigWithProof:
+      type: object
+      properties:
+        secret:
+          description: Secret
+          type: string
+          pattern: '^[a-zA-Z_0-9\-]*$'
+        idSignConf:
+          description: Identifiant de configuration à sélectionner parmi la liste des configurations disponibles pour la signature (appel de l'opération "/configurations").
+          type: integer
+          format: int64
+        file:
+          description: Document à signer.
+          type: string
+          format: binary
         idVerifSignConf:
           description: Identifiant de configuration à sélectionner parmi la liste des configurations disponibles pour la vérification de signature (appel de l'opération "/configurations").
           type: integer
