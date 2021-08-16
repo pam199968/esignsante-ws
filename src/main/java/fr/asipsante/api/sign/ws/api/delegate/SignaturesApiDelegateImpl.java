@@ -273,7 +273,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 	@Override
 	public ResponseEntity<ESignSanteSignatureReportWithProof> signatureXMLdsigWithProof(final Long idSignConf,
 			final MultipartFile doc, final Long idVerifSignConf, final String requestId, final String proofTag,
-			final String applicantId, final String secret, final List<String> signers) {
+			final String applicantId, final String secret) {
 		Version wsVersion = DEFAULT_VERSION;
 		try {
 			// get version object for proof generation
@@ -292,7 +292,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 				proofParameters.setOpenidTokens(tokens);
 			}
 			return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters,
-					ESignatureType.XMLDSIG, signers);
+					ESignatureType.XMLDSIG, null);
 		} catch (AsipSignClientException e) {
 			log.error(ExceptionUtils.getStackTrace(e));
 			return new ResponseEntity<>(SignWsUtils.asipHttpError(e));
@@ -470,8 +470,8 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 	 */
 	@Override
 	public ResponseEntity<ESignSanteSignatureReport> signatureXMLdsig(final Long idSignConf, final MultipartFile doc,
-			final String secret, List<String> signers) {
-		return digitalSignature(secret, idSignConf, doc, ESignatureType.XMLDSIG, signers);
+			final String secret) {
+		return digitalSignature(secret, idSignConf, doc, ESignatureType.XMLDSIG, null);
 	}
 
 	/**
