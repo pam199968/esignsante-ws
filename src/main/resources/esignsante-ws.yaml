@@ -11,7 +11,7 @@ servers:
         default: /
 info:
   description: API du composant eSignSante. <br>Ce composant dit de "signature" mutualise et homogénéise la mise en oeuvre des besoins autour de la signature. <br>Il permet de signer des documents ainsi que de vérifier la validité d'une signature ou d'un certificat.    <br>
-  version: 2.5.0.0
+  version: 2.5.0.8
   title: eSignSante
   contact:
     email: esignsante@asipsante.fr
@@ -649,7 +649,8 @@ components:
           format: binary
         signers:
           type: array
-          description: Liste des signataires délégataires.
+          description: Liste des signataires délégataires. L'IHM swagger ne gère qu'1 seul signer - pour gérer plusieurs signers, rajouter des paramètres à la requête CURL.
+          example: curl -X POST [...] -F "signers=Dupont" -F "signers=Dupond"
           items:
             type: string
     SignDocumentWithProof:
@@ -669,7 +670,8 @@ components:
           format: binary
         signers:
           type: array
-          description: Liste des signataires délégataires.
+          description: Liste des signataires délégataires. L'IHM swagger ne gère qu'1 seul signer - pour gérer plusieurs signers, rajouter des paramètres à la requête CURL.
+          example: curl -X POST [...] -F "signers=Dupont" -F "signers=Dupond"
           items:
             type: string
         idVerifSignConf:
@@ -1041,6 +1043,8 @@ components:
   parameters:
     OpenidTokens:
       name: OpenidTokens
+      description: Une liste de openid tokens peut être passée au format JSON. Attention aux simples et doubles guillemets lors du passage de paramètres JSON.
+      example: "curl -X POST [...] -H  \"accept: application/json\" -H 'openidToken: {\"introspectionResponse\":\"xxx\",\"userInfo\":\"xxxx\",\"accessToken\":\"xxxxx\"}' -H 'openidToken: {\"introspectionResponse\":\"xxxxxx\",\"userInfo\":\"xxxxxxx\",\"accessToken\":\"xxxxxxxxx\"}' -H \"Content-Type: multipart/form-data\" [...]"
       in: header
       schema:
         type: array
