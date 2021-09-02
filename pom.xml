@@ -399,8 +399,8 @@
 				<artifactory.hostname>https://repo.forge.ans.henix.fr/</artifactory.hostname>
 -->
 				<ldap.server.url>ldap://annuaire.asipsante.fr</ldap.server.url>
-				<docker.registry>registry.repo.forge.ans.henix.fr</docker.registry>
-				<image.registry>esignsante-registry.repo.forge.ans.henix.fr</image.registry>
+				<docker.registry>registry.repo.docker.asip.hst.fluxus.net</docker.registry>
+				<image.registry>registry.repo.docker.asip.hst.fluxus.net</image.registry>
 			</properties>
 			<distributionManagement>
 				<repository>
@@ -422,7 +422,7 @@
 				<artifactory.password>password</artifactory.password>
 				<artifactory.hostname>http://st-forge.asipsante.fr:8081</artifactory.hostname>
 				<ldap.server.url>ldap://annuaire-igc.esante.gouv.fr:389</ldap.server.url>
-				<docker.registry>registry.repo.asip.asipsante.fr</docker.registry>
+				<docker.registry>registry.repo.docker.asip.hst.fluxus.net</docker.registry>
 				<!--<image.registry>esignsante-registry.repo.artifactory-interne.henix.asipsante.fr</image.registry>-->
 				<image.registry>registry.repo.docker.asip.hst.fluxus.net</image.registry>
 			</properties>
