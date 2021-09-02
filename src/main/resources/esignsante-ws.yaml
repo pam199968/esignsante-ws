@@ -688,7 +688,7 @@ components:
           format: binary
         signers:
           type: array
-          description: Liste des signataires délégataires. L'IHM swagger ne gère qu'1 seul signer - pour gérer plusieurs signers, rajouter des paramètres à la requête CURL.
+          description: 'Liste des signataires délégataires. L''IHM swagger ne gère qu''1 seul signer - pour gérer plusieurs signers, rajouter des paramètres à la requête CURL.<br>Exemple: curl -X POST [...] -F "signers=Dupont" -F "signers=Dupond"'
           example: curl -X POST [...] -F "signers=Dupont" -F "signers=Dupond"
           items:
             type: string
