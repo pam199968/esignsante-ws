@@ -1,5 +1,5 @@
 /**
- * (c) Copyright 1998-2020, ANS. All rights reserved.
+ * (c) Copyright 1998-2021, ANS. All rights reserved.
  */
 
 package fr.asipsante.api.sign.config.observer;
