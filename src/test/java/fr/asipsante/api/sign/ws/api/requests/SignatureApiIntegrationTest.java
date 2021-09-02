@@ -167,24 +167,6 @@ public class SignatureApiIntegrationTest {
         assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 2, body.names().length());
 
     }
-    
-    /**
-     * Cas passant signature XMLDSIG sans preuve avec signers.
-     * Les signers ne devraient pas être pris en compte.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void signatureXMLdsigTestNoProofWithSigners() throws Exception {
-        final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/xmldsig").file(xml).param("secret", "123456")
-                .param("idSignConf", "1").param("signers", "signer1", "signer2").accept("application/json")).andExpect(status().is2xxSuccessful())
-                .andDo(print()).andReturn();
-
-        final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
-        assertEquals("La Liste des erreurs n'est pas vide", 0, body.getJSONArray("erreurs").length());
-        assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 2, body.names().length());
-
-    }
 
     /**
      * Cas non passant signature XMLDSIG sans preuve, secret incorrect.
@@ -327,6 +309,21 @@ public class SignatureApiIntegrationTest {
         assertEquals("La Liste des erreurs n'est pas vide", 0, body.getJSONArray("erreurs").length());
         assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 5, body.names().length());
         assertTrue("La signature n'est pas valide", (Boolean) body.get("valide"));
+    }
+    
+    /**
+     * Cas non passant signature XADES avec preuve avec openidToken non conforme.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void signatureXadesTestWithProofAndTokens() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/xadesbaselinebwithproof").file(xml)
+                .param("secret", "123456").param("idSignConf", "1").param("idVerifSignConf", "1")
+                .param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
+                .header("openidTokens",
+						"[{\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"}]")
+                .accept("application/json")).andExpect(status().isNotImplemented()).andDo(print()).andReturn();
     }
 
     /**

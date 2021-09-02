@@ -649,7 +649,7 @@ components:
           format: binary
         signers:
           type: array
-          description: Liste des signataires délégataires. L'IHM swagger ne gère qu'1 seul signer - pour gérer plusieurs signers, rajouter des paramètres à la requête CURL.
+          description: 'Liste des signataires délégataires. L''IHM swagger ne gère qu''1 seul signer - pour gérer plusieurs signers, rajouter des paramètres à la requête CURL.<br>Exemple: curl -X POST [...] -F "signers=Dupont" -F "signers=Dupond"'
           example: curl -X POST [...] -F "signers=Dupont" -F "signers=Dupond"
           items:
             type: string
@@ -1099,8 +1099,8 @@ components:
   parameters:
     OpenidTokens:
       name: OpenidTokens
-      description: Une liste de openid tokens peut être passée au format JSON. Attention aux simples et doubles guillemets lors du passage de paramètres JSON.
-      example: "curl -X POST [...] -H  \"accept: application/json\" -H 'openidToken: {\"introspectionResponse\":\"xxx\",\"userInfo\":\"xxxx\",\"accessToken\":\"xxxxx\"}' -H 'openidToken: {\"introspectionResponse\":\"xxxxxx\",\"userInfo\":\"xxxxxxx\",\"accessToken\":\"xxxxxxxxx\"}' -H \"Content-Type: multipart/form-data\" [...]"
+      description: 'Un openidToken peut être passé au format JSON. Pour passer plusieurs tokens, il faut utiliser plusieurs paramètres de header. Attention aux simples et doubles guillemets lors du passage de paramètres JSON.<br>Exemple: curl -X POST [...] -H "accept: application/json" -H ''openidTokens: {"introspectionResponse":"xxx","userInfo":"xxxx","accessToken":"xxxxx"}'' -H ''openidTokens: {"introspectionResponse":"xxxxxx","userInfo":"xxxxxxx","accessToken":"xxxxxxxxx"}'' -H "Content-Type: multipart/form-data" [...]'
+      example: "curl -X POST [...] -H  \"accept: application/json\" -H 'openidTokens: {\"introspectionResponse\":\"xxx\",\"userInfo\":\"xxxx\",\"accessToken\":\"xxxxx\"}' -H 'openidTokens: {\"introspectionResponse\":\"xxxxxx\",\"userInfo\":\"xxxxxxx\",\"accessToken\":\"xxxxxxxxx\"}' -H \"Content-Type: multipart/form-data\" [...]"
       in: header
       schema:
         type: array

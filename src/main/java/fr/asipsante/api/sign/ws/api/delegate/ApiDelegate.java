@@ -64,7 +64,7 @@ public class ApiDelegate {
 	 */
 	public List<OpenidToken> getOpenIdTokenHeader() throws AsipSignClientException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		Optional<String[]> arrayValues = getRequest().map(r -> r.getHeaderValues("OpenidToken"));
+		Optional<String[]> arrayValues = getRequest().map(r -> r.getHeaderValues("OpenidTokens"));
 		List<OpenidToken> openidTokens = new ArrayList<OpenidToken>();
 		if (arrayValues.isPresent()) {
 

@@ -57,7 +57,7 @@ public class ValidationApiIntegrationTest {
 	private MockMultipartFile doc;
 
 	/** The pdf. */
-	private MockMultipartFile pdf;
+	private MockMultipartFile pdf, pdf2;
 
 	static {
 		final String confPath;
@@ -83,6 +83,10 @@ public class ValidationApiIntegrationTest {
 
 		pdf = new MockMultipartFile("file", "doc_signe_pades.pdf", null,
 				Thread.currentThread().getContextClassLoader().getResourceAsStream("doc_signe_pades.pdf"));
+
+		pdf2 = new MockMultipartFile("file", "ANS organigramme-signed-pades-baseline-b.pdf", null,
+				Thread.currentThread().getContextClassLoader()
+						.getResourceAsStream("ANS organigramme-signed-pades-baseline-b.pdf"));
 	}
 
 	/**
@@ -133,19 +137,50 @@ public class ValidationApiIntegrationTest {
 	 * @throws Exception the exception
 	 */
 	@Test
-	public void verifSignPadesBaselineBTest() throws Exception {
+	public void verifSignPadesBaselineBTestWithProof() throws Exception {
 		final MvcResult result = mockMvc.perform(MockMvcRequestBuilders
 				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf).param("idVerifSignConf", "1")
 				.param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
 				.param("idProofConf", "1").accept("application/json")
-				.header("OpenidToken",
+				.header("OpenidTokens",
 						"{\"accessToken\":\"xxxTokenValuexxx\",\"introspectionResponse\":\"xxxIntrospecxxx\",\"userInfo\":\"xxxuserInfoxxx\"}")
-				.header("OpenidToken",
+				.header("OpenidTokens",
 						"{\"accessToken\":\"xxxTokenValue2xxx\",\"introspectionResponse\":\"xxxIntrospec2xxx\",\"userInfo\":\"xxxuserInfo2xxx\"}"))
 				.andExpect(status().isOk()).andDo(print()).andReturn();
 
 		final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
 		assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 4, body.names().length());
+	}
+
+	/**
+	 * Cas non passant validation PADES avec preuve et openid tokens.
+	 *
+	 * @throws Exception the exception
+	 */
+	@Test
+	public void verifSignPadesBaselineBTestWithProof2() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders
+				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf).param("idVerifSignConf", "1")
+				.param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
+				.param("idProofConf", "1").accept("application/json").header("OpenidTokens",
+						"[{\"accessToken\":\"xxxTokenValuexxx\",\"introspectionResponse\":\"xxxIntrospecxxx\",\"userInfo\":\"xxxuserInfoxxx\"}, {\"accessToken\":\"xxxTokenValue2xxx\",\"introspectionResponse\":\"xxxIntrospec2xxx\",\"userInfo\":\"xxxuserInfo2xxx\"}]"))
+				.andExpect(status().isNotImplemented()).andDo(print()).andReturn();
+	}
+
+	/**
+	 * Cas passant validation PADES sans preuve.
+	 *
+	 * @throws Exception the exception
+	 */
+	@Test
+	public void verifSignPadesBaselineBTest() throws Exception {
+		final MvcResult result = mockMvc
+				.perform(MockMvcRequestBuilders.multipart("/validation/signatures/padesbaselineb").file(pdf2)
+						.param("idVerifSignConf", "1").accept("application/json"))
+				.andExpect(status().isOk()).andDo(print()).andReturn();
+
+		final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
+		assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 3, body.names().length());
 	}
 
 	/**
@@ -157,9 +192,10 @@ public class ValidationApiIntegrationTest {
 	public void verifSignPadesBaselineBTestWrongTokens() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf)
 				.param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
-				.param("applicantId", "RPPS").param("idProofConf", "1").accept("application/json").header("OpenidToken",
-						"[{\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"}]"))
-				.andExpect(status().isNotImplemented()).andDo(print()).andReturn();
+				.param("applicantId", "RPPS").param("idProofConf", "1")
+				.header("openidTokens",
+						"[{\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"}]")
+				.accept("application/json")).andExpect(status().isNotImplemented()).andDo(print()).andReturn();
 	}
 
 	/**
