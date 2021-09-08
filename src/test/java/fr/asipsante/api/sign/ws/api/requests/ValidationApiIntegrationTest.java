@@ -132,7 +132,7 @@ public class ValidationApiIntegrationTest {
 	}
 
 	/**
-	 * Cas passant validation PADES avec preuve et openid tokens.
+	 * Cas passant validation PADES avec preuve.
 	 *
 	 * @throws Exception the exception
 	 */
@@ -141,11 +141,7 @@ public class ValidationApiIntegrationTest {
 		final MvcResult result = mockMvc.perform(MockMvcRequestBuilders
 				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf).param("idVerifSignConf", "1")
 				.param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
-				.param("idProofConf", "1").accept("application/json")
-				.header("OpenidTokens",
-						"{\"accessToken\":\"xxxTokenValuexxx\",\"introspectionResponse\":\"xxxIntrospecxxx\",\"userInfo\":\"xxxuserInfoxxx\"}")
-				.header("OpenidTokens",
-						"{\"accessToken\":\"xxxTokenValue2xxx\",\"introspectionResponse\":\"xxxIntrospec2xxx\",\"userInfo\":\"xxxuserInfo2xxx\"}"))
+				.param("idProofConf", "1").accept("application/json"))
 				.andExpect(status().isOk()).andDo(print()).andReturn();
 
 		final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
@@ -153,7 +149,7 @@ public class ValidationApiIntegrationTest {
 	}
 
 	/**
-	 * Cas non passant validation PADES avec preuve et openid tokens.
+	 * Cas non passant validation PADES avec preuve.
 	 *
 	 * @throws Exception the exception
 	 */
@@ -162,8 +158,7 @@ public class ValidationApiIntegrationTest {
 		mockMvc.perform(MockMvcRequestBuilders
 				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf).param("idVerifSignConf", "1")
 				.param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
-				.param("idProofConf", "1").accept("application/json").header("OpenidTokens",
-						"[{\"accessToken\":\"xxxTokenValuexxx\",\"introspectionResponse\":\"xxxIntrospecxxx\",\"userInfo\":\"xxxuserInfoxxx\"}, {\"accessToken\":\"xxxTokenValue2xxx\",\"introspectionResponse\":\"xxxIntrospec2xxx\",\"userInfo\":\"xxxuserInfo2xxx\"}]"))
+				.param("idProofConf", "1").accept("application/json"))
 				.andExpect(status().isNotImplemented()).andDo(print()).andReturn();
 	}
 
@@ -181,21 +176,6 @@ public class ValidationApiIntegrationTest {
 
 		final JSONObject body = new JSONObject(result.getResponse().getContentAsString());
 		assertEquals("Toutes les données attendus en réponse ne sont pas retrouvées", 3, body.names().length());
-	}
-
-	/**
-	 * Cas non passant validation PADES avec preuve et openid tokens non conformes.
-	 *
-	 * @throws Exception the exception
-	 */
-	@Test
-	public void verifSignPadesBaselineBTestWrongTokens() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf)
-				.param("idVerifSignConf", "1").param("requestId", "Request-1").param("proofTag", "MonTAG")
-				.param("applicantId", "RPPS").param("idProofConf", "1")
-				.header("openidTokens",
-						"[{\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"}]")
-				.accept("application/json")).andExpect(status().isNotImplemented()).andDo(print()).andReturn();
 	}
 
 	/**

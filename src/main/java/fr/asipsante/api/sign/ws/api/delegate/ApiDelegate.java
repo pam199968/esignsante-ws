@@ -5,6 +5,7 @@
 package fr.asipsante.api.sign.ws.api.delegate;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,19 +61,23 @@ public class ApiDelegate {
 	 * Gets the OpenidToken header.
 	 *
 	 * @return the OpenidToken header
-	 * @throws AsipSignClientException 
+	 * @throws AsipSignClientException
 	 */
-	public List<OpenidToken> getOpenIdTokenHeader() throws AsipSignClientException {
+	public List<OpenidToken> parseOpenIdTokenHeader() throws AsipSignClientException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		Optional<String[]> arrayValues = getRequest().map(r -> r.getHeaderValues("OpenidTokens"));
+		Optional<String[]> arrayValues = getRequest().map(r -> r.getHeaderValues("X-OpenidToken"));
 		List<OpenidToken> openidTokens = new ArrayList<OpenidToken>();
 		if (arrayValues.isPresent()) {
 
-			for (String json : arrayValues.get()) {
+			for (String b64string : arrayValues.get()) {
 				try {
-					OpenidToken oid = objectMapper.readValue(json, OpenidToken.class);
-					openidTokens.add(oid);
-				} catch (JsonProcessingException e) {
+					String[] singleValues = b64string.split(",");
+					for (String b64value : singleValues) {
+						byte[] decodedBytes = Base64.getDecoder().decode(b64value);
+						OpenidToken oid = objectMapper.readValue(new String(decodedBytes), OpenidToken.class);
+						openidTokens.add(oid);
+					}
+				} catch (Exception e) {
 					logger.error("Error lors du mapping du token", e);
 					throw new AsipSignClientException("Tokens Openid non conformes.");
 				}

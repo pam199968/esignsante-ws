@@ -63,7 +63,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 	private static final int MAJOR = 2;
 
 	/** Default ESignSante version. */
-	private static final Version DEFAULT_VERSION = new Version(MAJOR, 0, 0, 0);
+	private static final Version DEFAULT_VERSION = new Version(MAJOR, 5, 0, 11);
 
 	/**
 	 * The log.
@@ -287,7 +287,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 		try {
 			// Remplissage de la liste des beans OpenId
 			List<OpenIdTokenBean> tokens;
-			tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
+			tokens = SignWsUtils.convertOpenIdTokens(parseOpenIdTokenHeader());
 			if (!tokens.isEmpty()) {
 				proofParameters.setOpenidTokens(tokens);
 			}
@@ -295,7 +295,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 					ESignatureType.XMLDSIG, null);
 		} catch (AsipSignClientException e) {
 			log.error(ExceptionUtils.getStackTrace(e));
-			return new ResponseEntity<>(SignWsUtils.asipHttpError(e));
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -329,15 +329,16 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 		try {
 			// Remplissage de la liste des beans OpenId
 			List<OpenIdTokenBean> tokens;
-			tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
+			tokens = SignWsUtils.convertOpenIdTokens(parseOpenIdTokenHeader());
 			if (!tokens.isEmpty()) {
 				proofParameters.setOpenidTokens(tokens);
 			}
 			return digitalSignatureWithProof(secret, idSignConf, doc, idVerifSignConf, proofParameters,
 					ESignatureType.XADES, signers);
 		} catch (AsipSignClientException e) {
+			// Problème lors du traitement du Header X-openidToken
 			log.error(ExceptionUtils.getStackTrace(e));
-			return new ResponseEntity<>(SignWsUtils.asipHttpError(e));
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -370,7 +371,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 		try {
 			// Remplissage de la liste des beans OpenId
 			List<OpenIdTokenBean> tokens;
-			tokens = SignWsUtils.convertOpenIdTokens(getOpenIdTokenHeader());
+			tokens = SignWsUtils.convertOpenIdTokens(parseOpenIdTokenHeader());
 			if (!tokens.isEmpty()) {
 				proofParameters.setOpenidTokens(tokens);
 			}
@@ -378,7 +379,7 @@ public class SignaturesApiDelegateImpl extends ApiDelegate implements Signatures
 					ESignatureType.PADES, signers);
 		} catch (AsipSignClientException e) {
 			log.error(ExceptionUtils.getStackTrace(e));
-			return new ResponseEntity<>(SignWsUtils.asipHttpError(e));
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 

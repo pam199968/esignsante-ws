@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.asipsante.api.sign</groupId>
 	<artifactId>esignsante-webservices</artifactId>
@@ -20,9 +22,9 @@
 		<version>2.5.2</version>
 	</parent>
 	<scm>
-		<developerConnection>${developperConnectionJenkinsfile}</developerConnection> 
-	  <tag>HEAD</tag>
-  </scm>
+		<developerConnection>${developperConnectionJenkinsfile}</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
 	<build>
 		<resources>
 			<resource>
@@ -120,6 +122,19 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<executions>
+					<execution>
+						<configuration>
+							<forkCount>1</forkCount>
+							<reuseForks>false</reuseForks>
+							<argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<version>4.2.0</version>
@@ -179,7 +194,6 @@
 				<configuration>
 					<from>
 						<image>${docker.registry}/openjdk:11-slim-buster</image>
-						<!--<image>openjdk:11-slim-buster</image>-->
 					</from>
 					<to>
 						<image>${image.registry}/cybersante/esignsante</image>
@@ -198,9 +212,9 @@
 							<port>8080</port>
 						</ports>
 						<format>Docker</format>
-						<!--this sacrifices reproducibility since the timestamp will change with every build-->
+						<!--this sacrifices reproducibility since the timestamp will change 
+							with every build -->
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-						<!--<creationTime>2020-09-01T10:15:30+09:00</creationTime>-->
 					</container>
 					<allowInsecureRegistries>true</allowInsecureRegistries>
 				</configuration>
@@ -208,8 +222,8 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<!--The vintage engine allows tests written with JUnit 4 to be run by JUnit 5.
-		It would be a good idea to migrate your tests to JUnit 5-->
+		<!--The vintage engine allows tests written with JUnit 4 to be run by JUnit 
+			5. It would be a good idea to migrate your tests to JUnit 5 -->
 		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
@@ -250,7 +264,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--activate prometheus metrics for springboot app-->
+		<!--activate prometheus metrics for springboot app -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -284,10 +298,6 @@
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
 				</exclusion>
-<!--				<exclusion>-->
-<!--					<groupId>org.springframework.security</groupId>-->
-<!--					<artifactId>spring-security-web</artifactId>-->
-<!--				</exclusion>-->
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -386,19 +396,10 @@
 	</dependencies>
 	<profiles>
 		<profile>
-			<activation>
-				<os>
-					<family>Windows</family>
-				</os>
-			</activation>
 			<id>dev</id>
 			<properties>
-				<!--proxy BT-->
+				<!--proxy BT (accès à artifactory par un tunnel ssh) -->
 				<artifactory.hostname>http://repo.proxy-dev-forge.asip.hst.fluxus.net</artifactory.hostname>
-				<!--résaux ANS-->
-<!--
-				<artifactory.hostname>https://repo.forge.ans.henix.fr/</artifactory.hostname>
--->
 				<ldap.server.url>ldap://annuaire.asipsante.fr</ldap.server.url>
 				<docker.registry>registry.repo.docker.proxy-prod-forge.asip.hst.fluxus.net</docker.registry>
 				<image.registry>registry.repo.docker.proxy-prod-forge.asip.hst.fluxus.net</image.registry>
@@ -410,6 +411,16 @@
 					<url>https://maven.pkg.github.com/ansforge/esignsante</url>
 				</repository>
 			</distributionManagement>
+		</profile>
+		<profile>
+			<id>ext</id>
+			<properties>
+				<!--réseaux externes (VPN...) -->
+				<artifactory.hostname>${ext.artifactory.hostname}</artifactory.hostname>
+				<ldap.server.url>ldap://annuaire.asipsante.fr</ldap.server.url>
+				<docker.registry>ext.docker.registry</docker.registry>
+				<image.registry>ext.image.registry</image.registry>
+			</properties>
 		</profile>
 		<profile>
 			<activation>
@@ -424,14 +435,9 @@
 				<artifactory.hostname>http://st-forge.asipsante.fr:8081</artifactory.hostname>
 				<ldap.server.url>ldap://annuaire-igc.esante.gouv.fr:389</ldap.server.url>
 				<docker.registry>registry.repo.docker.proxy-prod-forge.asip.hst.fluxus.net</docker.registry>
-				<!--<image.registry>esignsante-registry.repo.artifactory-interne.henix.asipsante.fr</image.registry>-->
 				<image.registry>registry.repo.docker.proxy-prod-forge.asip.hst.fluxus.net</image.registry>
 			</properties>
 			<distributionManagement>
-				<!--  <repository>
-					<id>artifactory</id>
-					<url>${distributionRepositoryJenkinsfile}</url>
-				</repository>-->
 				<repository>
 					<id>artifactory</id>
 					<url>${artifactory.hostname}/artifactory/asip-releases</url>
@@ -461,8 +467,6 @@
 						<artifactId>maven-release-plugin</artifactId>
 						<version>3.0.0-M1</version>
 						<configuration>
-							<!--<username>${svn.username}</username>
-							<password>${svn.password}</password>-->
 							<checkModificationExcludes>
 								<checkModificationExclude>pom.xml</checkModificationExclude>
 								<checkModificationExclude>pom.xml.versionsBackup</checkModificationExclude>
@@ -473,20 +477,6 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
-		<profile>
-			<activation>
-				<property>
-					<name>pa4</name>
-				</property>
-			</activation>
-			<id>dev-pa4</id>
-			<properties>
-				<artifactory.hostname>http://repo.proxy-dev-forge.asip.hst.fluxus.net</artifactory.hostname>
-				<ldap.server.url>ldap://annuaire-igc.esante.gouv.fr</ldap.server.url>
-				<docker.registry>registry.repo.proxy-dev-forge.asip.hst.fluxus.net</docker.registry>
-				<image.registry>registry.repo.proxy-dev-forge.asip.hst.fluxus.net</image.registry>
-			</properties>
 		</profile>
 	</profiles>
 </project>

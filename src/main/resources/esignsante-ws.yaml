@@ -11,7 +11,7 @@ servers:
         default: /
 info:
   description: API du composant eSignSante. <br>Ce composant dit de "signature" mutualise et homogénéise la mise en oeuvre des besoins autour de la signature. <br>Il permet de signer des documents ainsi que de vérifier la validité d'une signature ou d'un certificat.    <br>
-  version: 2.5.0.9
+  version: 2.5.0.11
   title: eSignSante
   contact:
     email: esignsante@asipsante.fr
@@ -1098,8 +1098,8 @@ components:
           type: string
   parameters:
     OpenidTokens:
-      name: OpenidTokens
-      description: 'Un openidToken peut être passé au format JSON. Pour passer plusieurs tokens, il faut utiliser plusieurs paramètres de header. Attention aux simples et doubles guillemets lors du passage de paramètres JSON.<br>Exemple: curl -X POST [...] -H "accept: application/json" -H ''openidTokens: {"introspectionResponse":"xxx","userInfo":"xxxx","accessToken":"xxxxx"}'' -H ''openidTokens: {"introspectionResponse":"xxxxxx","userInfo":"xxxxxxx","accessToken":"xxxxxxxxx"}'' -H "Content-Type: multipart/form-data" [...]'
+      name: X-OpenidToken
+      description: 'Un openidToken doit être passé au format JSON encodé en base 64. Pour passer plusieurs tokens, il faut utiliser plusieurs paramètres de header. Attention aux simples et doubles guillemets lors du passage de paramètres JSON.<br>Exemple: curl -X POST [...] -H "accept: application/json" -H ''openidTokens: {"introspectionResponse":"xxx","userInfo":"xxxx","accessToken":"xxxxx"}'' -H ''openidTokens: {"introspectionResponse":"xxxxxx","userInfo":"xxxxxxx","accessToken":"xxxxxxxxx"}'' -H "Content-Type: multipart/form-data" [...]'
       example: "curl -X POST [...] -H  \"accept: application/json\" -H 'openidTokens: {\"introspectionResponse\":\"xxx\",\"userInfo\":\"xxxx\",\"accessToken\":\"xxxxx\"}' -H 'openidTokens: {\"introspectionResponse\":\"xxxxxx\",\"userInfo\":\"xxxxxxx\",\"accessToken\":\"xxxxxxxxx\"}' -H \"Content-Type: multipart/form-data\" [...]"
       in: header
       schema:

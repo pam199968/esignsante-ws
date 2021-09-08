@@ -30,6 +30,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -142,8 +143,12 @@ public class SignWsUtils {
 	        for(OpenidToken token: openidTokens) {
 	        	OpenIdTokenBean tokenBean = new OpenIdTokenBean();
 	        	tokenBean.setAccessToken(token.getAccessToken());
-	        	tokenBean.setIntrospectionResponse(token.getIntrospectionResponse());
-	        	tokenBean.setUserInfo(token.getUserInfo());
+	        	byte [] instrospectionresponseB64 =token.getIntrospectionResponse().getBytes();
+	        	String encodedIR = Base64.getEncoder().encodeToString(instrospectionresponseB64);
+	        	tokenBean.setIntrospectionResponse(encodedIR);
+	        	byte [] userInfoB64 =token.getIntrospectionResponse().getBytes();
+	        	String encodedUI = Base64.getEncoder().encodeToString(userInfoB64);
+	        	tokenBean.setUserInfo(encodedUI);
 	        	listTokenBeans.add(tokenBean);
 	        }
         }

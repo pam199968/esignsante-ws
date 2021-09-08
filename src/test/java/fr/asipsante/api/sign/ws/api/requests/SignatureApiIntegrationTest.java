@@ -321,11 +321,61 @@ public class SignatureApiIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/xadesbaselinebwithproof").file(xml)
                 .param("secret", "123456").param("idSignConf", "1").param("idVerifSignConf", "1")
                 .param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
-                .header("openidTokens",
-						"[{\"tokenValue\":\"xxxTokenValuexxx\",\"tokenIntrospectionEndpoint\":\"xxxIntrospecxxx\",\"userInfoEndpoint\":\"xxxuserInfoxxx\"}]")
-                .accept("application/json")).andExpect(status().isNotImplemented()).andDo(print()).andReturn();
+                .header("X-OpenidToken",
+						"Jeton non conforme")
+                .accept("application/json")).andExpect(status().is4xxClientError()).andDo(print()).andReturn();
     }
 
+    
+    /**
+     * Cas  passant signature XADES avec preuve avec un jeton openidToken  conforme.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void signatureXadesTestWithProofAndTokenConforme() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/xadesbaselinebwithproof").file(xml)
+                .param("secret", "123456").param("idSignConf", "1").param("idVerifSignConf", "1")
+                .param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
+                .header("X-OpenidToken",
+						"eyJhY2Nlc3NUb2tlbiI6IkFBIiwiaW50cm9zcGVjdGlvblJlc3BvbnNlIjoiQkIiLCJ1c2VySW5mbyI6IlVVIn0=")
+                .accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
+    }
+    
+    
+    
+    /**
+     * Cas  passant signature XADES avec preuve avec deux jetons openidToken conformes.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void signatureXadesTestWithProofAndTwoTokenConformes() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/xadesbaselinebwithproof").file(xml)
+                .param("secret", "123456").param("idSignConf", "1").param("idVerifSignConf", "1")
+                .param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
+                .header("X-OpenidToken",
+						"eyJhY2Nlc3NUb2tlbiI6IkFBIiwiaW50cm9zcGVjdGlvblJlc3BvbnNlIjoiQkIiLCJ1c2VySW5mbyI6IlVVIn0=")
+                .header("X-OpenidToken",
+						"eyJhY2Nlc3NUb2tlbiI6IkIiLCJpbnRyb3NwZWN0aW9uUmVzcG9uc2UiOiJDIiwidXNlckluZm8iOiJWIn0=")
+                .accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
+    }
+    
+    /**
+     * Cas  passant signature XADES avec preuve avec deux jetons openidToken conformes dans le même header.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void signatureXadesTestWithProofAndTwoTokenSameHeader() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/signatures/xadesbaselinebwithproof").file(xml)
+                .param("secret", "123456").param("idSignConf", "1").param("idVerifSignConf", "1")
+                .param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
+                .header("X-OpenidToken",
+						"eyJhY2Nlc3NUb2tlbiI6IkFBIiwiaW50cm9zcGVjdGlvblJlc3BvbnNlIjoiQkIiLCJ1c2VySW5mbyI6IlVVIn0=,eyJhY2Nlc3NUb2tlbiI6IkIiLCJpbnRyb3NwZWN0aW9uUmVzcG9uc2UiOiJDIiwidXNlckluZm8iOiJWIn0=")
+                .accept("application/json")).andExpect(status().isOk()).andDo(print()).andReturn();
+    }
+ 
     /**
      * Erreur 404.
      *
