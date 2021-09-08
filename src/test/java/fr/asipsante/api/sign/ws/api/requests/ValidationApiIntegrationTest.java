@@ -149,20 +149,6 @@ public class ValidationApiIntegrationTest {
 	}
 
 	/**
-	 * Cas non passant validation PADES avec preuve.
-	 *
-	 * @throws Exception the exception
-	 */
-	@Test
-	public void verifSignPadesBaselineBTestWithProof2() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders
-				.multipart("/validation/signatures/padesbaselinebwithproof").file(pdf).param("idVerifSignConf", "1")
-				.param("requestId", "Request-1").param("proofTag", "MonTAG").param("applicantId", "RPPS")
-				.param("idProofConf", "1").accept("application/json"))
-				.andExpect(status().isNotImplemented()).andDo(print()).andReturn();
-	}
-
-	/**
 	 * Cas passant validation PADES sans preuve.
 	 *
 	 * @throws Exception the exception
