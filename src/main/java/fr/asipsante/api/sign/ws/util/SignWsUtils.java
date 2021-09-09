@@ -146,7 +146,7 @@ public class SignWsUtils {
 	        	byte [] instrospectionresponseB64 =token.getIntrospectionResponse().getBytes();
 	        	String encodedIR = Base64.getEncoder().encodeToString(instrospectionresponseB64);
 	        	tokenBean.setIntrospectionResponse(encodedIR);
-	        	byte [] userInfoB64 =token.getIntrospectionResponse().getBytes();
+	        	byte [] userInfoB64 =token.getUserInfo().getBytes();
 	        	String encodedUI = Base64.getEncoder().encodeToString(userInfoB64);
 	        	tokenBean.setUserInfo(encodedUI);
 	        	listTokenBeans.add(tokenBean);
