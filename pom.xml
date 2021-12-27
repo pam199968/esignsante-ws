@@ -21,7 +21,7 @@
 	</parent>
 	<scm>
 		<developerConnection>${developperConnectionJenkinsfile}</developerConnection>
-		<tag>HEAD</tag>
+		<tag>esignsante-webservices-2.5.0.13</tag>
 	</scm>
 	<build>
 		<resources>
