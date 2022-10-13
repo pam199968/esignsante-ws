@@ -8,7 +8,7 @@
 	<version>2.5.0.14-SNAPSHOT</version>
 	<properties>
 		<java.version>1.8</java.version>
-		<asipsign.version>2.4.0.5-SNAPSHOT</asipsign.version>
+		<asipsign.version>2.4.0.5</asipsign.version>
 		<springfox-version>2.9.2</springfox-version>
 		<servlet-api.version>4.0.1</servlet-api.version>
 		<start-class>fr.asipsante.api.sign.ws.Application</start-class>

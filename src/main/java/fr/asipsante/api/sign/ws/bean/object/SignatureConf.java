@@ -363,7 +363,7 @@ public class SignatureConf {
 	 */
 	public boolean checkValid() throws IllegalAccessException {
 		for (final Field f : getClass().getDeclaredFields()) {
-			if (f.getDeclaredAnnotation(Nullable.class) == null) {
+			if (!f.isAnnotationPresent(Nullable.class)) {
 				if (!"signParams".equals(f.getName()) && f.get(this) == null) {
 					log.error("Missing field {} in object {}", f.getName(), this.getClass().getSimpleName());
 					return false;
