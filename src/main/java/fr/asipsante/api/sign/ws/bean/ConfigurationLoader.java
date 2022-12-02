@@ -60,6 +60,7 @@ public class ConfigurationLoader {
         params.setSignId(signConf.getSignId());
         params.setSignValueId(signConf.getSignValueId());
         params.setElementToSign(signConf.getElementToSign());
+        params.setElementBeforeInsertSignature(signConf.getElementBeforeInsertSignature());
 
         final String ksPass = RandomStringUtils.randomAscii(ASCII_COUNT);
 

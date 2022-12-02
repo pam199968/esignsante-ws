@@ -95,6 +95,12 @@ public class SignatureConf {
 	 */
 	@Nullable
 	private String elementToSign;
+	
+    /** 
+     * The element where to insert the signature after
+     */
+    @Nullable
+	private String elementBeforeInsertSignature;
 
 	/**
 	 * Instantiates a new Signature conf.
@@ -345,6 +351,14 @@ public class SignatureConf {
 		this.elementToSign = elementToSign;
 	}
 
+	public String getElementBeforeInsertSignature() {
+		return elementBeforeInsertSignature;
+	}
+
+	public void setElementBeforeInsertSignature(String elementBeforeInsertSignature) {
+		this.elementBeforeInsertSignature = elementBeforeInsertSignature;
+	}
+
 	@Override
 	public String toString() {
 		return "SignatureConf{" + "idSignConf='" + idSignConf + '\'' + ", secret='" + secret + '\'' + ", idProofConf='"
@@ -352,7 +366,8 @@ public class SignatureConf {
 				+ ", privateKey='" + privateKey + '\'' + ", canonicalisationAlgorithm='" + canonicalisationAlgorithm
 				+ '\'' + ", digestAlgorithm='" + digestAlgorithm + '\'' + ", signaturePackaging='" + signaturePackaging
 				+ '\'' + ", signId='" + signId + '\'' + ", signValueId='" + signValueId + '\'' + ", objectId='"
-				+ objectId + '\'' + ", elementToSign='" + elementToSign + '\'' + '}';
+				+ objectId + '\'' + ", elementToSign='" + elementToSign + '\'' 
+				+ ", elementBeforeInsertSignature='" + elementBeforeInsertSignature + '}';
 	}
 
 	/**
