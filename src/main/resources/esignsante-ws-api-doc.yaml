@@ -1132,6 +1132,12 @@ components:
             dn:
                description: DN du certificat qui sera utilisé pour signer le document #WithComments
                type: string
+            elementToSign:
+              description: Nom local de l'élément à signer pour une signature d'un fragment XML
+              type: string
+            elementBeforeInsertSignature:
+              description: Nom local de l'élément avant lequel il faut inserer la signature
+              type: string
       ConfVerifSign:
          type: object
          required:

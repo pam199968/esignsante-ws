@@ -122,6 +122,16 @@ public class ConfigurationMapper {
                     signConf.getCanonicalisationAlgorithm()));
             config.signaturePackaging(SignaturePackagingEnum.fromValue(signConf.getSignaturePackaging()));
             config.dn(getDn(signConf.getCertificate()));
+            if(signConf.getElementToSign()!= null) {
+            	config.elementToSign(signConf.getElementToSign());
+            }else {
+            	config.elementToSign("*");
+            }
+            if(signConf.getElementBeforeInsertSignature()!= null) {
+            	config.elementBeforeInsertSignature(signConf.getElementBeforeInsertSignature());
+            }else {
+            	config.elementBeforeInsertSignature("*");
+            }
             signConfigs.add(config);
         }
         return signConfigs;
